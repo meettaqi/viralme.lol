@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${dmSans.variable} ${geistMono.variable}`}>
       <body className="min-h-screen bg-background text-foreground antialiased">
         <Script
-          src="https://datafa.st/js/script.cookieless.js"
+          src="https://datafa.st/js/script.js"
           data-website-id="dfid_vXi6O2z6DLnvmkHjoQF26"
           data-domain="viralme.lol"
           strategy="afterInteractive"
