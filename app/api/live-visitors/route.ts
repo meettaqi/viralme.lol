@@ -15,10 +15,13 @@ export async function GET() {
       },
       cache: "no-store",
     });
-    if (!res.ok) return NextResponse.json({ visitors: null });
+    if (!res.ok) {
+      const err = await res.text().catch(() => "Unknown error");
+      return NextResponse.json({ visitors: null, error: err, status: res.status });
+    }
     const data = await res.json();
     return NextResponse.json({ visitors: data?.data?.[0]?.visitors || 0 });
-  } catch {
-    return NextResponse.json({ visitors: null });
+  } catch (e: any) {
+    return NextResponse.json({ visitors: null, error: e.message });
   }
 }
