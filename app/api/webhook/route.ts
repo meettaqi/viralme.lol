@@ -9,6 +9,7 @@ import {
 import { activateTakeover, getTakeover } from "@/lib/takeover";
 import { fetchOG } from "@/lib/og";
 import { generateId } from "@/lib/utils";
+import { saveLeadMagnet } from "@/lib/leads";
 
 export const runtime = "nodejs";
 
@@ -38,6 +39,10 @@ export async function POST(req: NextRequest) {
   const order = event.data;
   const meta = (order.metadata ?? {}) as Record<string, string>;
   const { type = "bid", id, identity, amount, referredBy, charge, vaultOffer, vaultSecret } = meta;
+
+  if (vaultOffer && vaultSecret) {
+    saveLeadMagnet(identity, vaultOffer, vaultSecret);
+  }
 
   if (!identity || !amount) {
     console.error("[webhook] Missing metadata", order.id);
