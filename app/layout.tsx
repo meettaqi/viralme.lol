@@ -37,7 +37,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${geistMono.variable}`}>
-      <head />
       <body className="min-h-screen bg-background text-foreground antialiased">
         <Script
           src="https://datafa.st/js/script.cookieless.js"

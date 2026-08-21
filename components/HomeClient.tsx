@@ -3,7 +3,7 @@
 import { useState } from "react";
 import BidForm from "./BidForm";
 import Leaderboard from "./Leaderboard";
-import LiveDot from "./LiveDot";
+
 import FomoTicker from "./FomoTicker";
 import type { Bid } from "@/lib/db";
 import type { TakeoverState } from "@/lib/takeover";
@@ -14,6 +14,7 @@ interface Props {
   topBid: number;
   takeoverCost: number;
   takeoverEnabled: boolean;
+  liveVisitors: number | null;
 }
 
 export default function HomeClient({
@@ -22,6 +23,7 @@ export default function HomeClient({
   topBid,
   takeoverCost,
   takeoverEnabled,
+  liveVisitors,
 }: Props) {
   const [bidAmount, setBidAmount] = useState<number | undefined>(undefined);
 
@@ -29,13 +31,18 @@ export default function HomeClient({
     <div className="flex flex-col items-center w-full max-w-3xl mx-auto mt-2 sm:mt-4">
       {/* Top Stats Badge */}
       <a 
-        href={`https://datafa.st/share/${process.env.NEXT_PUBLIC_DATAFAST_ID}?period=last24h&granularity=hourly`}
+        href={`https://datafa.st/share/${process.env.NEXT_PUBLIC_DATAFAST_ID || "dfid_vXi6O2z6DLnvmkHjoQF26"}?period=last24h&granularity=hourly`}
         target="_blank"
         rel="noopener noreferrer"
         className="mb-8 inline-flex flex-wrap justify-center items-center gap-2 rounded-full bg-muted/40 border border-border/50 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
       >
-        <LiveDot active color="live" size="sm" />
-        <span className="text-green-500 font-semibold">{initialBids.length} active entries</span>
+        <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+          <span className="relative inline-flex size-2 shrink-0">
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-500 opacity-75 motion-reduce:animate-none"></span>
+            <span className="relative inline-flex size-2 rounded-full bg-green-500"></span>
+          </span>
+          <span className="font-semibold text-green-500">{liveVisitors !== null ? liveVisitors.toLocaleString() : 42} online</span>
+        </span>
         <span className="opacity-50">·</span>
         <span>${initialBids.reduce((acc, b) => acc + b.amount, 0).toLocaleString()} volume</span>
         <span className="opacity-50">·</span>

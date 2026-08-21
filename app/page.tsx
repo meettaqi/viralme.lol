@@ -7,11 +7,28 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
+async function getLiveVisitors() {
+  try {
+    const res = await fetch("https://datafa.st/api/websites/dfid_vXi6O2z6DLnvmkHjoQF26/active", {
+      headers: {
+        Authorization: `Bearer ${process.env.DATAFAST_ACCESS_TOKEN || "dft_019883c7f1aabe784c45c588b4721d14be06e7b77e2a7be0"}`,
+      },
+      next: { revalidate: 10 }
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.[0]?.x || data?.x || 0;
+  } catch {
+    return null;
+  }
+}
+
 export default async function Home() {
   const bids = await getLeaderboard();
   const topBid = await getTopBid();
   const takeover = await getTakeover();
   const settings = await getSettings();
+  const liveVisitors = await getLiveVisitors();
   const takeoverCost = topBid > 0 ? topBid * settings.takeoverMultiplier : (settings.takeoverMultiplier * 10 || 50);
 
   return (
@@ -24,6 +41,7 @@ export default async function Home() {
           topBid={topBid}
           takeoverCost={takeoverCost}
           takeoverEnabled={settings.takeoverEnabled}
+          liveVisitors={liveVisitors}
         />
       </main>
 
