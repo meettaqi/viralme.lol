@@ -14,7 +14,7 @@ export async function POST() {
 
 export async function GET() {
   try {
-    const stats = getStats();
+    const stats = await getStats();
     return NextResponse.json({ totalVisitors: stats.totalVisitors });
   } catch (err) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

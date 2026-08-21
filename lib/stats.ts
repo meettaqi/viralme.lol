@@ -1,7 +1,4 @@
-import fs from "fs";
-import path from "path";
-
-const STATS_FILE = path.join(process.cwd(), "data", "stats.json");
+import { supabase } from './supabaseClient';
 
 export interface Stats {
   totalVisitors: number;
@@ -11,28 +8,42 @@ const DEFAULT_STATS: Stats = {
   totalVisitors: 0,
 };
 
-export function getStats(): Stats {
+export async function getStats(): Promise<Stats> {
   try {
-    if (!fs.existsSync(path.dirname(STATS_FILE))) {
-      fs.mkdirSync(path.dirname(STATS_FILE), { recursive: true });
-    }
-    if (fs.existsSync(STATS_FILE)) {
-      const data = fs.readFileSync(STATS_FILE, "utf8");
-      return { ...DEFAULT_STATS, ...JSON.parse(data) };
-    }
+    const { data } = await supabase
+      .from('bids')
+      .select('amount')
+      .eq('identity', 'SYS_TOTAL_VISITORS')
+      .single();
+    if (data) return { totalVisitors: Number(data.amount) };
   } catch (err) {
-    console.error("Error reading stats:", err);
+    console.error('Error reading stats:', err);
   }
   return DEFAULT_STATS;
 }
 
-export function incrementTotalVisitors(): number {
-  const stats = getStats();
-  stats.totalVisitors += 1;
+export async function incrementTotalVisitors(): Promise<number> {
   try {
-    fs.writeFileSync(STATS_FILE, JSON.stringify(stats, null, 2));
+    let stats = await getStats();
+    let newTotal = stats.totalVisitors + 1;
+    
+    if (newTotal === 1) {
+      await supabase.from('bids').insert({
+        id: crypto.randomUUID(),
+        identity: 'SYS_TOTAL_VISITORS',
+        title: 'System Stats',
+        description: 'Total unique visitors tracking',
+        amount: newTotal,
+        base_amount: newTotal,
+        paid: true,
+        stripe_session_id: 'sys'
+      });
+    } else {
+      await supabase.from('bids').update({ amount: newTotal }).eq('identity', 'SYS_TOTAL_VISITORS');
+    }
+    return newTotal;
   } catch (err) {
-    console.error("Error writing stats:", err);
+    console.error('Error writing stats:', err);
+    return 0;
   }
-  return stats.totalVisitors;
 }
