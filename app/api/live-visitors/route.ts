@@ -8,7 +8,7 @@ export async function GET() {
       headers: {
         Authorization: `Bearer ${process.env.DATAFAST_ACCESS_TOKEN || "dft_019883c7f1aabe784c45c588b4721d14be06e7b77e2a7be0"}`,
       },
-      next: { revalidate: 10 }
+      cache: "no-store",
     });
     if (!res.ok) return NextResponse.json({ visitors: null });
     const data = await res.json();
