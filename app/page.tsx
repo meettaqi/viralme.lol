@@ -9,9 +9,14 @@ export const dynamic = "force-dynamic";
 
 async function getLiveVisitors() {
   try {
-    const res = await fetch("https://datafa.st/api/v1/analytics/realtime?websiteId=dfid_vXi6O2z6DLnvmkHjoQF26", {
+    const token = process.env.DATAFAST_ACCESS_TOKEN || "dft_019883c7f1aabe784c45c588b4721d14be06e7b77e2a7be0";
+    const url = token.startsWith("df_") 
+      ? "https://datafa.st/api/v1/analytics/realtime"
+      : "https://datafa.st/api/v1/analytics/realtime?websiteId=dfid_vXi6O2z6DLnvmkHjoQF26";
+    
+    const res = await fetch(url, {
       headers: {
-        Authorization: `Bearer ${process.env.DATAFAST_ACCESS_TOKEN || "dft_019883c7f1aabe784c45c588b4721d14be06e7b77e2a7be0"}`,
+        Authorization: `Bearer ${token}`,
       },
       cache: "no-store",
     });
