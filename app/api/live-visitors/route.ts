@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const token = process.env.DATAFAST_ACCESS_TOKEN || "dft_aac92aa3f417d2434908f066eb6c44645a6628c35d20f723";
+    const token = "dft_aac92aa3f417d2434908f066eb6c44645a6628c35d20f723";
     const url = token.startsWith("df_") 
       ? "https://datafa.st/api/v1/analytics/realtime"
       : "https://datafa.st/api/v1/analytics/realtime?websiteId=6a88058f18a92e2689e02ab1";
