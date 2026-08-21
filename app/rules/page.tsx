@@ -48,16 +48,7 @@ export default function RulesPage() {
           </ul>
         </section>
 
-        <section>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">The ViralMe Creator Fund</h2>
-          <ul className="space-y-3 pl-1 leading-relaxed text-muted-foreground font-medium">
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Every 24 hours</strong>, the total amount spent on the #1 position is recorded.</span></li>
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">30% of that amount</strong> goes into a community creator fund.</span></li>
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>This pool rewards independent creators who make entertaining videos and content about the ViralMe leaderboard game.</span></li>
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>Creators earn from the pool based on verified views and community engagement.</span></li>
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>This creates a self-sustaining social ecosystem: players compete on the leaderboard → the prize pool grows → creators are rewarded for making content → the game grows.</span></li>
-          </ul>
-        </section>
+
 
         <section>
           <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">What you can list</h2>
