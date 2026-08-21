@@ -14,12 +14,6 @@ interface Props {
   onClaimClick?: (amount: number) => void;
 }
 
-const TIER_STYLES: Record<number, string> = {
-  1: "border-brand-500/60 shadow-[0_0_20px_rgba(255,0,0,0.15)] bg-gradient-to-r from-brand-500/10 to-transparent",
-  2: "border-brand-400/40 shadow-md",
-  3: "border-brand-300/30",
-};
-
 function avatarLetter(identity: string): string {
   const clean = identity.replace(/^https?:\/\//, "").replace(/^@/, "");
   return (clean[0] ?? "?").toUpperCase();
@@ -63,10 +57,7 @@ function getFaviconUrl(identity: string) {
 
 export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }: Props) {
   const [hovered, setHovered] = useState(false);
-
   const claimAmount = bid.amount + 1;
-  const padRank = rank < 10 ? `0${rank}` : rank;
-
   const href = bid.identity.startsWith("http")
     ? bid.identity
     : bid.identity.startsWith("@")
@@ -87,15 +78,13 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
   return (
     <div
       className={cn(
-        "relative group rounded-xl border bg-card transition-all duration-300 hover:border-brand-500/30 flex items-center p-4 sm:p-5 gap-4",
-        rank === 1 ? "border-brand-500/50 bg-brand-500/5 scale-[1.02] animate-glow-pulse my-2" : "border-border/60 hover:bg-muted/10 overflow-hidden",
-        isTakeover && "ring-1 ring-brand-500/50 shadow-sm"
+        "relative group flex items-start sm:items-center p-3 sm:p-5 gap-3 sm:gap-5 transition-colors border-b last:border-b-0 border-border/40 hover:bg-muted/30",
+        rank === 1 && "bg-brand-500/5 hover:bg-brand-500/10 border-brand-500/20",
+        isTakeover && "bg-yellow-500/5 hover:bg-yellow-500/10"
       )}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{ animationFillMode: "both", animationDelay: `${rank * 50}ms` }}
     >
-      {/* Invisible link overlay for perfect SEO, middle-clicks, and popup bypassing */}
       <a 
         href={href} 
         target="_blank" 
@@ -105,25 +94,22 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
         aria-label={`Visit ${bid.title || bid.identity}`}
       />
 
-      {/* Rank Badge */}
-      <div className="flex-none">
+      <div className="flex-none w-8 sm:w-12 pt-1 sm:pt-0 text-right">
         <span className={cn(
-          "flex items-center justify-center h-7 px-2.5 rounded-full text-xs font-bold gap-1",
-          rank === 1 ? "bg-brand-500 text-white shadow-sm" : rank <= 3 ? "bg-muted text-foreground border border-border/50" : "bg-transparent text-muted-foreground"
+          "text-xl sm:text-2xl font-bold font-mono tracking-tighter",
+          rank === 1 ? "text-brand-500" : "text-muted-foreground/50"
         )}>
-          {rank === 1 && <span className="text-[10px]">👑</span>}
-          #{rank}
+          {rank === 1 ? "👑" : `#${rank}`}
         </span>
       </div>
 
-      {/* Favicon / Avatar */}
-      <div className="flex-none w-10 h-10 rounded-full flex items-center justify-center text-base font-bold overflow-hidden bg-white border border-border/50 shadow-sm">
+      <div className="flex-none w-12 h-12 sm:w-14 sm:h-14 rounded flex items-center justify-center text-xl font-bold overflow-hidden bg-white border border-border/50 shadow-sm mt-0.5 sm:mt-0">
         {getFaviconUrl(bid.identity) ? (
           <Image 
             src={getFaviconUrl(bid.identity)!} 
             alt={bid.identity}
-            width={40}
-            height={40}
+            width={56}
+            height={56}
             className="w-full h-full object-cover bg-white"
             priority={rank <= 3}
             onError={(e) => {
@@ -139,28 +125,25 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
         )}
       </div>
 
-      {/* Content: Title, Description, Metadata */}
-      <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+      <div className="flex-1 min-w-0 flex flex-col justify-center gap-0.5 sm:gap-1">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-bold text-lg sm:text-xl truncate text-foreground tracking-tight">
             {bid.title || bid.identity.replace(/^https?:\/\//, '')}
           </span>
           {bid.hallOfFame && (
-            <span title="Held #1 for 24+ hours" className="flex-none text-[10px] px-1.5 py-0.5 rounded-sm bg-yellow-500/10 text-yellow-500 font-bold uppercase tracking-wider">
+            <span title="Held #1 for 24+ hours" className="flex-none text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/10 text-yellow-600 font-bold uppercase tracking-wider">
               HoF
             </span>
           )}
           {isTakeover && (
-            <span className="flex-none text-[10px] px-1.5 py-0.5 rounded-sm bg-brand-500/10 text-brand-500 font-bold uppercase tracking-wider">
+            <span className="flex-none text-[10px] px-1.5 py-0.5 rounded bg-brand-500/10 text-brand-500 font-bold uppercase tracking-wider">
               Takeover
             </span>
           )}
         </div>
         
-        
-        {/* Description or URL fallback */}
         {bid.description ? (
-          <p className="text-sm sm:text-base text-muted-foreground leading-snug line-clamp-2">
+          <p className="text-sm sm:text-base text-muted-foreground leading-snug line-clamp-1 sm:line-clamp-2 pr-4">
             {bid.description}
           </p>
         ) : (
@@ -169,50 +152,46 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
           </p>
         )}
 
-
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium mt-0.5">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] sm:text-xs text-muted-foreground font-medium mt-1.5 relative z-20">
           <span>{timeAgo(bid.updatedAt || bid.createdAt)}</span>
-          <span className="opacity-50">·</span>
-          <span className="text-foreground font-semibold">{bid.clicks || 0} clicks</span>
+          <span className="opacity-50 hidden sm:inline">·</span>
+          <span>{bid.clicks || 0} clicks</span>
 
           {bid.boostTotal > 0 && (
             <>
-              <span className="opacity-50">·</span>
-              <span className="text-brand-400">+{formatUSD(bid.boostTotal)} boosted</span>
+              <span className="opacity-50 hidden sm:inline">·</span>
+              <span className="text-brand-400 font-bold">+{formatUSD(bid.boostTotal)} boosted</span>
             </>
           )}
+
+          <span className="opacity-50">·</span>
+          <div onClick={(e) => e.stopPropagation()} className="inline-block relative z-30">
+            <BoostButton identity={bid.identity} currentAmount={bid.amount} />
+          </div>
+
+          <span className="opacity-50">·</span>
+          <div onClick={(e) => e.stopPropagation()} className="inline-block relative z-30">
+            <ReferralButton identity={bid.identity} />
+          </div>
         </div>
       </div>
 
-      {/* Right side: Amount */}
-      <div className="flex-none pl-2">
+      <div className="flex-none flex flex-col items-end justify-center pl-2 sm:pl-4 relative z-20">
         <span
           className={cn(
-            "font-bold tabular-nums text-xl sm:text-2xl font-mono",
+            "font-bold tabular-nums text-2xl sm:text-3xl font-mono tracking-tighter",
             rank === 1 ? "text-brand-500" : "text-foreground"
           )}
         >
           {formatUSD(bid.amount)}
         </span>
-      </div>
-
-      {/* Hover Actions - Absolute Over Right Side */}
-      <div
-        className={cn(
-          "absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-card p-1 rounded-lg transition-opacity duration-200 border border-border/50 shadow-sm z-20",
-          rank === 1 && "bg-brand-500/10 border-brand-500/30",
-          hovered ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <ReferralButton identity={bid.identity} />
-        <BoostButton identity={bid.identity} currentAmount={bid.amount} />
+        
         <button
           onClick={(e) => {
             e.stopPropagation();
             onClaimClick?.(claimAmount);
           }}
-          className="flex items-center gap-1 rounded bg-brand-500 hover:bg-brand-600 text-white px-3 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap"
+          className="mt-1 sm:mt-1.5 flex items-center justify-center rounded bg-foreground text-background hover:bg-brand-500 hover:text-white px-3 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm font-bold transition-all whitespace-nowrap z-30 cursor-pointer relative"
         >
           Claim {formatUSD(claimAmount)}
         </button>
