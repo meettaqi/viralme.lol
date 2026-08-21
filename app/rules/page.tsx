@@ -49,6 +49,18 @@ export default function RulesPage() {
         </section>
 
         <section>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">The ViralMe Flywheel</h2>
+          <ul className="space-y-3 pl-1 leading-relaxed text-muted-foreground font-medium">
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Every 24 hours</strong>, the total amount spent by the #1 position is recorded.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">30% of that amount</strong> becomes a content/viral marketing budget.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>That budget is used to pay creators and clippers to make content promoting ViralMe (they earn based on verified views).</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>Those videos bring new users to the site.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>New users compete for #1, adding more money to the system and spinning the flywheel faster.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Users fund the marketing → creators distribute the marketing → views bring users → users create more revenue.</strong></span></li>
+          </ul>
+        </section>
+
+        <section>
           <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">What you can list</h2>
           <ul className="space-y-3 pl-1 leading-relaxed text-muted-foreground font-medium">
             <li className="flex gap-3"><span className="text-green-500 font-bold">✓</span> <span>A <strong className="text-foreground">product website</strong></span></li>
