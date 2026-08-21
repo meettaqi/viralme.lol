@@ -6,6 +6,7 @@ export interface LeadMagnet {
 }
 
 export interface Bid {
+  leadMagnet?: LeadMagnet;
   id: string;
   identity: string;
   title: string;

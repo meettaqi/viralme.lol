@@ -6,6 +6,7 @@ import type { Bid } from "@/lib/db";
 import BoostButton from "./BoostButton";
 import ReferralButton from "./ReferralButton";
 import Image from "next/image";
+import LeadVault from "./LeadVault";
 
 interface Props {
   bid: Bid;
@@ -35,12 +36,12 @@ function formatUrl(identity: string) {
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
   const m = Math.floor(diff / 60000);
-  if (m < 1) return "just now";
-  if (m < 60) return `${m}m ago`;
+  if (m < 1) return "1 minute ago";
+  if (m < 60) return `${m} minutes ago`;
   const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
+  if (h < 24) return `${h} hours ago`;
   const d = Math.floor(h / 24);
-  return `${d}d ago`;
+  return `${d} days ago`;
 }
 
 function getFaviconUrl(identity: string) {
@@ -56,6 +57,7 @@ function getFaviconUrl(identity: string) {
 }
 
 export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }: Props) {
+  const isTop3 = rank <= 3;
   const claimAmount = bid.amount + 1;
   const href = bid.identity.startsWith("http")
     ? bid.identity
@@ -74,14 +76,30 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
     }).catch(() => {});
   }
 
+  // Get specific styles for top 3
+  const getContainerStyle = () => {
+    if (rank === 1) return "rounded-[1.5rem] border-2 border-brand-500 bg-brand-500/5 p-4 sm:p-5";
+    if (rank === 2) return "rounded-[1.5rem] border border-brand-500/60 bg-card p-4 sm:p-5";
+    if (rank === 3) return "rounded-[1.5rem] border border-brand-500/30 bg-card p-4 sm:p-5";
+    return "border-b border-border/50 py-4 sm:py-5 px-1 sm:px-4 bg-transparent";
+  };
+
+  const getRankStyle = () => {
+    if (rank === 1) return "bg-brand-500 text-white shadow-sm";
+    if (rank === 2) return "bg-brand-500/80 text-white shadow-sm";
+    if (rank === 3) return "bg-brand-500/60 text-white shadow-sm";
+    return "";
+  };
+
   return (
     <div
       className={cn(
-        "relative group flex flex-col p-4 sm:p-6 transition-colors border-b last:border-b-0 border-border/40 hover:bg-muted/20 w-full",
-        rank === 1 && "bg-brand-500/5 hover:bg-brand-500/10 border-brand-500/20",
-        isTakeover && "bg-yellow-500/5 hover:bg-yellow-500/10"
+        "relative group transition-colors w-full flex flex-col hover:bg-muted/10",
+        getContainerStyle(),
+        isTakeover && "ring-2 ring-yellow-500 shadow-sm"
       )}
     >
+      {/* Invisible link overlay */}
       <a 
         href={href} 
         target="_blank" 
@@ -91,25 +109,31 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
         aria-label={`Visit ${bid.title || bid.identity}`}
       />
 
-      <div className="flex items-start sm:items-center gap-4 sm:gap-6 w-full">
+      <div className="flex items-start sm:items-center w-full gap-3 sm:gap-5 relative">
         {/* Rank */}
-        <div className="flex-none w-8 sm:w-12 pt-1 sm:pt-0 text-right">
-          <span className={cn(
-            "text-2xl sm:text-4xl font-light tracking-tighter",
-            rank === 1 ? "text-brand-500 font-bold" : "text-muted-foreground/30"
-          )}>
-            #{rank}
-          </span>
+        <div className="flex-none w-8 sm:w-10 pt-1.5 sm:pt-0 flex justify-end">
+          {isTop3 ? (
+            <span className={cn(
+              "flex items-center justify-center h-6 px-2.5 rounded-full text-xs font-bold",
+              getRankStyle()
+            )}>
+              #{rank}
+            </span>
+          ) : (
+            <span className="text-sm font-semibold text-muted-foreground mr-1">
+              #{rank}
+            </span>
+          )}
         </div>
 
         {/* Icon */}
-        <div className="flex-none w-14 h-14 sm:w-16 sm:h-16 rounded overflow-hidden bg-white border border-border/50 shadow-sm flex items-center justify-center text-2xl font-bold mt-1 sm:mt-0">
+        <div className="flex-none w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden bg-white border border-border/30 shadow-sm flex items-center justify-center text-xl font-bold mt-1 sm:mt-0">
           {getFaviconUrl(bid.identity) ? (
             <Image 
               src={getFaviconUrl(bid.identity)!} 
               alt={bid.identity}
-              width={64}
-              height={64}
+              width={56}
+              height={56}
               className="w-full h-full object-cover bg-white"
               priority={rank <= 3}
               onError={(e) => {
@@ -125,80 +149,87 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
           )}
         </div>
 
-        {/* Info */}
-        <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-extrabold text-xl sm:text-2xl truncate text-foreground tracking-tight">
+        {/* Content */}
+        <div className="flex-1 min-w-0 flex flex-col justify-center">
+          <div className="flex items-center justify-between w-full pr-1">
+            <span className="font-bold text-base sm:text-lg truncate text-foreground tracking-tight pr-4">
               {bid.title || bid.identity.replace(/^https?:\/\//, '')}
             </span>
-            {bid.hallOfFame && (
-              <span title="Held #1 for 24+ hours" className="flex-none text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/10 text-yellow-600 font-bold uppercase tracking-wider">
-                👑 HoF
-              </span>
-            )}
-            {isTakeover && (
-              <span className="flex-none text-[10px] px-1.5 py-0.5 rounded bg-brand-500/10 text-brand-500 font-bold uppercase tracking-wider">
-                Takeover Active
-              </span>
-            )}
+            {/* Amount floating right on top line */}
+            <span
+              className={cn(
+                "font-semibold tabular-nums text-base sm:text-lg flex-none ml-2",
+                isTop3 ? "text-brand-500" : "text-foreground"
+              )}
+            >
+              {formatUSD(bid.amount)}
+            </span>
           </div>
           
           {bid.description ? (
-            <p className="text-sm sm:text-base text-muted-foreground leading-snug line-clamp-2 pr-4 font-medium">
+            <p className="text-xs sm:text-sm text-muted-foreground leading-snug line-clamp-1 sm:line-clamp-2 pr-4 mt-0.5">
               {bid.description}
             </p>
           ) : (
-            <p className="text-sm sm:text-base text-muted-foreground leading-snug truncate font-medium">
+            <p className="text-xs sm:text-sm text-muted-foreground leading-snug truncate mt-0.5">
               {formatUrl(bid.identity)}
             </p>
           )}
 
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs sm:text-sm text-muted-foreground font-semibold mt-1 relative z-20">
-            <span>{timeAgo(bid.updatedAt || bid.createdAt)}</span>
-            <span className="opacity-40">·</span>
-            <span>{bid.clicks || 0} clicks</span>
+          <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground font-medium mt-1.5">
+            <span className="text-brand-500/80">{timeAgo(bid.updatedAt || bid.createdAt)}</span>
+            <span className="text-brand-500 text-[10px]">●</span>
+            <span className="text-foreground font-semibold">{bid.clicks || 0} clicks</span>
 
             {bid.boostTotal > 0 && (
               <>
-                <span className="opacity-40">·</span>
-                <span className="text-brand-500 font-bold">+{formatUSD(bid.boostTotal)} boosted</span>
+                <span className="opacity-50 mx-1">·</span>
+                <span className="text-brand-500">+{formatUSD(bid.boostTotal)} boosted</span>
+              </>
+            )}
+            
+            {bid.hallOfFame && (
+              <>
+                <span className="opacity-50 mx-1">·</span>
+                <span className="text-yellow-600 font-bold uppercase tracking-wider">👑 HoF</span>
               </>
             )}
           </div>
         </div>
+      </div>
 
-        {/* Amount & Claim */}
-        <div className="flex-none flex flex-col items-end justify-center pl-2 sm:pl-4 relative z-20">
-          <span
-            className={cn(
-              "font-bold tabular-nums text-3xl sm:text-4xl font-mono tracking-tighter",
-              rank === 1 ? "text-brand-500" : "text-foreground"
-            )}
-          >
-            {formatUSD(bid.amount)}
-          </span>
-          
+      {/* Hover Action Overlay */}
+      <div 
+        className="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30"
+      >
+        <div className="bg-card shadow-lg border border-border/50 rounded-lg p-1.5 flex items-center gap-1.5 backdrop-blur-md">
+          <div onClick={(e) => e.stopPropagation()}>
+            <BoostButton identity={bid.identity} currentAmount={bid.amount} />
+          </div>
+          <div onClick={(e) => e.stopPropagation()}>
+            <ReferralButton identity={bid.identity} />
+          </div>
           <button
             onClick={(e) => {
               e.stopPropagation();
               onClaimClick?.(claimAmount);
             }}
-            className="mt-2 flex items-center justify-center rounded bg-foreground text-background hover:bg-brand-500 hover:text-white px-4 py-1.5 sm:px-5 sm:py-2 text-xs sm:text-sm font-bold transition-all shadow-sm whitespace-nowrap z-30 cursor-pointer relative"
+            className="flex items-center justify-center rounded bg-brand-500 hover:bg-brand-600 text-white px-3 py-1.5 text-xs font-bold transition-all shadow-sm whitespace-nowrap"
           >
             Outbid {formatUSD(claimAmount)}
           </button>
         </div>
       </div>
 
-      {/* Action Row - Always Visible on Mobile, Optional on Desktop */}
-      <div className="w-full flex flex-wrap items-center gap-3 mt-5 pt-4 border-t border-border/30 relative z-30 ml-0 sm:ml-24">
-        <div onClick={(e) => e.stopPropagation()} className="cursor-pointer relative z-30 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-muted/50 hover:bg-muted text-xs font-semibold text-muted-foreground transition-colors">
-          <BoostButton identity={bid.identity} currentAmount={bid.amount} />
+      {/* Lead Vault */}
+      {rank === 1 && bid.leadMagnet && (
+        <div className="mt-4 ml-0 sm:ml-16 w-full sm:w-[calc(100%-4rem)] relative z-30">
+          <LeadVault 
+            identity={bid.identity} 
+            leadMagnet={bid.leadMagnet} 
+          />
         </div>
-        <div onClick={(e) => e.stopPropagation()} className="cursor-pointer relative z-30 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-muted/50 hover:bg-muted text-xs font-semibold text-muted-foreground transition-colors">
-          <ReferralButton identity={bid.identity} />
-        </div>
-      </div>
+      )}
     </div>
   );
 }

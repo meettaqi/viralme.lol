@@ -103,16 +103,27 @@ export default function Leaderboard({ initialBids, initialTakeover, onClaimClick
           <p className="text-muted-foreground text-sm mt-1">Be the first to claim #1.</p>
         </div>
       ) : (
-        <div className="flex flex-col bg-card border border-border/50 rounded-xl overflow-hidden shadow-sm">
-          {sorted.map((bid, i) => (
-            <LeaderboardEntry
-              key={bid.id}
-              bid={bid}
-              rank={i + 1}
-              isTakeover={takeover.active && bid.identity === takeover.identity}
-              onClaimClick={onClaimClick}
-            />
-          ))}
+        <div className="flex flex-col gap-4">
+          {sorted.map((bid, i) => {
+            const rank = i + 1;
+            const isTop3 = rank <= 3;
+            return (
+              <div key={bid.id} className="flex flex-col">
+                <LeaderboardEntry
+                  bid={bid}
+                  rank={rank}
+                  isTakeover={takeover.active && bid.identity === takeover.identity}
+                  onClaimClick={onClaimClick}
+                />
+                {rank === 3 && sorted.length > 3 && (
+                  <div className="flex items-center justify-center my-6 relative">
+                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border/60"></div></div>
+                    <div className="relative px-4 py-1 text-[10px] font-bold text-brand-500 uppercase tracking-widest bg-background border border-border/60 rounded-full">TOP 3</div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
