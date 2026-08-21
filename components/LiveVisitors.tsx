@@ -3,14 +3,25 @@
 import { useEffect, useState } from "react";
 import { liveVisitorCount } from "@/lib/utils";
 
-export default function LiveVisitors() {
-  const [visitors, setVisitors] = useState(0);
+export default function LiveVisitors({ initialVisitors }: { initialVisitors: number | null }) {
+  const [visitors, setVisitors] = useState(initialVisitors ?? 0);
 
   useEffect(() => {
-    setVisitors(liveVisitorCount());
-    const interval = setInterval(() => {
-      setVisitors(liveVisitorCount());
-    }, 30000);
+    const fetchVisitors = async () => {
+      try {
+        const res = await fetch("/api/live-visitors");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.visitors !== null) {
+            setVisitors(data.visitors);
+          }
+        }
+      } catch (err) {
+        // ignore
+      }
+    };
+
+    const interval = setInterval(fetchVisitors, 30000);
     return () => clearInterval(interval);
   }, []);
 
