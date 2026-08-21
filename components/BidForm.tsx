@@ -1,0 +1,182 @@
+"use client";
+
+import { useState, useEffect, useId } from "react";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  defaultAmount?: number;
+  topBid: number;
+  takeoverCost: number;
+  takeoverActive: boolean;
+  takeoverEnabled?: boolean;
+}
+
+const MIN_BID = 2;
+const STEP = 1;
+
+export default function BidForm({
+  defaultAmount,
+  topBid = 0,
+  takeoverCost = 50,
+  takeoverActive,
+  takeoverEnabled = true,
+}: Props) {
+  const [identity, setIdentity] = useState("");
+  const [amount, setAmount] = useState(defaultAmount || Math.max(MIN_BID, topBid + 1));
+  const [loading, setLoading] = useState(false);
+  const [takingOver, setTakingOver] = useState(false);
+  const [error, setError] = useState("");
+  const formId = useId();
+
+  // Very naive projection
+  const projectedRank = amount > topBid ? 1 : amount > topBid * 0.5 ? 2 : 3;
+  // Stub for existing bid difference logic
+  const existingBid = 0;
+  const charge = Math.max(MIN_BID, amount - existingBid);
+
+  function adjust(delta: number) {
+    setAmount((prev) => Math.max(MIN_BID, prev + delta));
+  }
+
+  function validateIdentity(val: string): string {
+    if (!val.trim()) return "Please enter a URL or handle.";
+    const v = val.trim().toLowerCase();
+    const blocked = ["t.me/", "discord.gg/", "wa.me/", "whatsapp", "messenger", "signal"];
+    if (blocked.some((b) => v.includes(b))) return "Chat/invite links are not allowed.";
+    const nsfw = ["porn", "xxx", "adult", "nsfw", "onlyfans"];
+    if (nsfw.some((n) => v.includes(n))) return "NSFW/adult content is not allowed.";
+    return "";
+  }
+
+  async function handleBid(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    const err = validateIdentity(identity);
+    if (err) { setError(err); return; }
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "bid", identity: identity.trim(), amount }),
+      });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else setError(data.error || "Something went wrong.");
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleTakeover(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    const err = validateIdentity(identity);
+    if (err) { setError(err); return; }
+
+    setTakingOver(true);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "takeover", identity: identity.trim() }),
+      });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else setError(data.error || "Something went wrong.");
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setTakingOver(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-center text-center w-full max-w-2xl mx-auto">
+      {/* Huge Pricing Header */}
+      <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-foreground flex items-center justify-center gap-3 mb-4">
+        Claim #{projectedRank} for 
+        <button 
+          onClick={() => adjust(-STEP)}
+          className="w-10 h-10 rounded-full bg-brand-500/10 text-brand-500 flex items-center justify-center hover:bg-brand-500/20 transition-colors text-2xl leading-none font-medium"
+        >-</button>
+        <span className="text-brand-500 tabular-nums inline-flex overflow-hidden">
+          $
+          <span key={amount} className="animate-bloop inline-block">
+            {amount}
+          </span>
+        </span>
+        <button 
+          onClick={() => adjust(STEP)}
+          className="w-10 h-10 rounded-full bg-brand-500/10 text-brand-500 flex items-center justify-center hover:bg-brand-500/20 transition-colors text-2xl leading-none font-medium"
+        >+</button>
+      </h2>
+
+      {/* Subtext */}
+      <p className="text-sm text-muted-foreground text-balance mb-8">
+        Your amount decides the rank. Paying less than the #1 price still puts you on the board at whatever place that bid can take.
+      </p>
+
+      {/* Input Row Form */}
+      <form
+        onSubmit={handleBid}
+        className="relative flex items-center w-full rounded-full border border-border/60 bg-card p-1.5 pl-4 shadow-sm hover:border-brand-500/30 transition-colors focus-within:border-brand-500/50 focus-within:ring-2 focus-within:ring-brand-500/20"
+      >
+        {/* Globe Icon */}
+        <svg className="w-5 h-5 text-muted-foreground mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+        </svg>
+        
+        <input
+          id={`${formId}-identity`}
+          type="text"
+          value={identity}
+          onChange={(e) => setIdentity(e.target.value)}
+          placeholder="Your product URL, @handle, or App Store link"
+          className="flex-1 bg-transparent border-none text-foreground text-sm sm:text-base focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
+          required
+        />
+        
+        <button
+          type="submit"
+          disabled={loading}
+          className="ml-2 rounded-full bg-brand-500 hover:bg-brand-600 px-6 py-3 text-sm font-bold text-white transition-all disabled:opacity-50 whitespace-nowrap shadow-sm"
+        >
+          {loading ? "Loading..." : "Outbid"}
+        </button>
+      </form>
+
+      {error && <p className="text-xs font-medium text-red-400 bg-red-400/10 py-2 px-3 rounded-md border border-red-400/20 mt-4">{error}</p>}
+
+      {/* Bottom Subtext */}
+      <p className="text-xs text-muted-foreground mt-4 mb-6">
+        Already on the list? Enter the same URL or @handle and up your bid to get back to the top.
+      </p>
+
+      {takeoverEnabled && (
+        <button
+          type="button"
+          disabled={takingOver || takeoverActive || !identity.trim()}
+          onClick={handleTakeover}
+          className={cn(
+            "px-4 py-1.5 rounded-full text-xs font-bold transition-all border",
+            takeoverActive
+              ? "bg-muted/50 border-border/30 text-muted-foreground cursor-not-allowed"
+              : !identity.trim()
+              ? "bg-muted/30 border-border/30 text-muted-foreground cursor-not-allowed opacity-70"
+              : "bg-orange-500/10 border-orange-500/30 text-orange-500 hover:bg-orange-500/20 shadow-sm"
+          )}
+        >
+          {takingOver
+            ? "Redirecting…"
+            : takeoverActive
+            ? "Takeover Active"
+            : `🔥 Hostile Takeover for $${takeoverCost.toLocaleString()}`}
+        </button>
+      )}
+    </div>
+  );
+}

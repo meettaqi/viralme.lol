@@ -1,0 +1,5 @@
+{
+  "takeoverEnabled": true,
+  "takeoverDurationHours": 3,
+  "takeoverMultiplier": 5
+}

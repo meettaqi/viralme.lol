@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Stark, minimalist white theme (like topapp.lol) */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+
+    /* High-energy Viral Red/Orange */
+    --brand-500: 3 90% 55%;  /* Electric Red-Orange */
+    --brand-400: 3 90% 65%;
+    --brand-300: 3 90% 75%;
+    --brand-200: 3 90% 85%;
+    --brand-100: 3 90% 95%;
+
+    --primary: var(--brand-500);
+    --primary-foreground: 0 0% 100%;
+
+    --ring: var(--brand-500);
+
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    /* Subtle dotted grid pattern */
+    background-image: radial-gradient(hsl(var(--border)) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
