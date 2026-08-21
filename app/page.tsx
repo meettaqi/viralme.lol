@@ -4,6 +4,7 @@ import { getLeaderboard, getTopBid } from "@/lib/db";
 import { getLeadMagnet } from "@/lib/leads";
 import { getTakeover } from "@/lib/takeover";
 import { getSettings } from "@/lib/settings";
+import { getStats } from "@/lib/stats";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -34,6 +35,7 @@ export default async function Home() {
   const topBid = await getTopBid();
   const takeover = await getTakeover();
   const settings = await getSettings();
+  const stats = await getStats();
   const liveVisitors = await getLiveVisitors();
   const takeoverCost = topBid > 0 ? topBid * settings.takeoverMultiplier : (settings.takeoverMultiplier * 10 || 50);
 
@@ -48,6 +50,7 @@ export default async function Home() {
           takeoverCost={takeoverCost}
           takeoverEnabled={settings.takeoverEnabled}
           liveVisitors={liveVisitors}
+          totalVisitors={stats.totalVisitors}
         />
       </main>
 

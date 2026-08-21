@@ -152,13 +152,13 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
         {/* Content */}
         <div className="flex-1 min-w-0 flex flex-col justify-center">
           <div className="flex items-center justify-between w-full pr-1">
-            <span className="font-bold text-base sm:text-lg truncate text-foreground tracking-tight pr-4">
+            <span className="font-bold text-lg sm:text-xl truncate text-foreground tracking-tight pr-4">
               {bid.title || bid.identity.replace(/^https?:\/\//, '')}
             </span>
             {/* Amount floating right on top line */}
             <span
               className={cn(
-                "font-semibold tabular-nums text-base sm:text-lg flex-none ml-2",
+                "font-bold tabular-nums text-xl sm:text-2xl flex-none ml-2 tracking-tight",
                 isTop3 ? "text-brand-500" : "text-foreground"
               )}
             >
