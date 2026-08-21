@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -36,12 +37,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${geistMono.variable}`}>
-      <head>
-        {process.env.NEXT_PUBLIC_DATAFAST_ID && (
-          <script defer data-website-id={process.env.NEXT_PUBLIC_DATAFAST_ID} src="https://datafa.st/js/script.js"></script>
-        )}
-      </head>
+      <head />
       <body className="min-h-screen bg-background text-foreground antialiased">
+        <Script
+          src="https://datafa.st/js/script.cookieless.js"
+          data-website-id="dfid_vXi6O2z6DLnvmkHjoQF26"
+          data-domain="viralme.lol"
+          strategy="afterInteractive"
+        />
         {children}
       </body>
     </html>
