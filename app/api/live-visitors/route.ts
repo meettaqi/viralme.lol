@@ -7,7 +7,7 @@ export async function GET() {
     const token = process.env.DATAFAST_ACCESS_TOKEN || "dft_019883c7f1aabe784c45c588b4721d14be06e7b77e2a7be0";
     const url = token.startsWith("df_") 
       ? "https://datafa.st/api/v1/analytics/realtime"
-      : "https://datafa.st/api/v1/analytics/realtime?websiteId=dfid_vXi6O2z6DLnvmkHjoQF26";
+      : "https://datafa.st/api/v1/analytics/realtime?websiteId=6a88058f18a92e2689e02ab1";
     
     const res = await fetch(url, {
       headers: {
