@@ -142,8 +142,8 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
       {/* Content: Title, Description, Metadata */}
       <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-bold text-base truncate text-foreground tracking-tight">
-            {bid.title || formatUrl(bid.identity)}
+          <span className="font-bold text-lg sm:text-xl truncate text-foreground tracking-tight">
+            {bid.title || bid.identity.replace(/^https?:\/\//, '')}
           </span>
           {bid.hallOfFame && (
             <span title="Held #1 for 24+ hours" className="flex-none text-[10px] px-1.5 py-0.5 rounded-sm bg-yellow-500/10 text-yellow-500 font-bold uppercase tracking-wider">
@@ -157,12 +157,18 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
           )}
         </div>
         
-        {/* Missing Element: Website/Handle Description */}
+        
+        {/* Description or URL fallback */}
         {bid.description ? (
-          <p className="text-sm text-foreground/85 leading-relaxed pr-2">
+          <p className="text-sm sm:text-base text-muted-foreground leading-snug line-clamp-2">
             {bid.description}
           </p>
-        ) : null}
+        ) : (
+          <p className="text-sm sm:text-base text-muted-foreground leading-snug truncate">
+            {formatUrl(bid.identity)}
+          </p>
+        )}
+
 
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium mt-0.5">
           <span>{timeAgo(bid.updatedAt || bid.createdAt)}</span>
@@ -182,8 +188,8 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
       <div className="flex-none pl-2">
         <span
           className={cn(
-            "font-semibold tabular-nums text-sm sm:text-base",
-            rank === 1 ? "text-brand-500/80" : "text-muted-foreground"
+            "font-bold tabular-nums text-xl sm:text-2xl font-mono",
+            rank === 1 ? "text-brand-500" : "text-foreground"
           )}
         >
           {formatUSD(bid.amount)}
