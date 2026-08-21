@@ -95,6 +95,9 @@ export async function getLeaderboard(): Promise<Bid[]> {
     .from('bids')
     .select('*')
     .eq('paid', true)
+    .not('identity', 'like', 'SYS_%')
+    .not('identity', 'like', 'MAGNET_%')
+    .not('identity', 'like', 'LEAD_%')
     .order('amount', { ascending: false })
     .order('created_at', { ascending: true });
 
@@ -278,6 +281,9 @@ export async function getHallOfFame(): Promise<Bid[]> {
     .select('*')
     .eq('hall_of_fame', true)
     .eq('paid', true)
+    .not('identity', 'like', 'SYS_%')
+    .not('identity', 'like', 'MAGNET_%')
+    .not('identity', 'like', 'LEAD_%')
     .order('updated_at', { ascending: false });
 
   if (error || !rows) return [];
