@@ -1,13 +1,15 @@
 import { getSettings } from "@/lib/settings";
-import { updateSettingsAction } from "./actions";
+import { updateSettingsAction, deleteBidAction } from "./actions";
+import { getLeaderboard } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
   const settings = await getSettings();
+  const bids = await getLeaderboard();
 
   return (
-    <main className="mx-auto w-full max-w-md px-4 py-20">
+    <main className="mx-auto w-full max-w-3xl px-4 py-20">
       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
       <form action={updateSettingsAction} className="space-y-6 bg-card border border-border/50 p-6 rounded-2xl shadow-sm">
@@ -70,6 +72,43 @@ export default async function AdminPage() {
           Save Settings
         </button>
       </form>
+
+      <div className="mt-12 space-y-6">
+        <h2 className="text-2xl font-bold">Manage Active Bids</h2>
+        <div className="space-y-3">
+          {bids.map((bid) => (
+            <div key={bid.id} className="flex items-center justify-between p-4 rounded-xl border border-border bg-card shadow-sm">
+              <div>
+                <p className="font-bold text-foreground">{bid.title}</p>
+                <p className="text-sm text-muted-foreground">{bid.identity} • ${bid.amount}</p>
+              </div>
+              
+              <form action={deleteBidAction} className="flex items-center gap-3">
+                <input type="hidden" name="bidId" value={bid.id} />
+                <input 
+                  type="password" 
+                  name="password" 
+                  placeholder="Admin Password" 
+                  required
+                  className="w-32 bg-background border border-border text-xs rounded-lg px-2 py-1.5"
+                />
+                <button 
+                  type="submit"
+                  className="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                  onClick={(e) => {
+                    if(!confirm('Are you sure you want to permanently delete this bid?')) e.preventDefault();
+                  }}
+                >
+                  Delete
+                </button>
+              </form>
+            </div>
+          ))}
+          {bids.length === 0 && (
+            <p className="text-muted-foreground text-sm">No active bids found.</p>
+          )}
+        </div>
+      </div>
     </main>
   );
 }

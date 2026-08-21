@@ -282,3 +282,8 @@ export async function getHallOfFame(): Promise<Bid[]> {
   if (error || !rows) return [];
   return rows.map(mapBidFromDB);
 }
+
+
+export async function deleteBid(id: string): Promise<void> {
+  await supabase.from('bids').delete().eq('id', id);
+}
