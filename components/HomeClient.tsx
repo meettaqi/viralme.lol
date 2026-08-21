@@ -29,6 +29,12 @@ export default function HomeClient({
 
   return (
     <div className="flex flex-col items-center w-full max-w-3xl mx-auto mt-2 sm:mt-4">
+            {/* Product Description */}
+      <div className="text-center mb-6 max-w-lg mx-auto">
+        <h1 className="text-foreground text-sm sm:text-base leading-relaxed text-muted-foreground font-medium">
+          A public leaderboard. You pay to stand above everyone else. <br className="hidden sm:block"/> Rank is the bid — nothing else.
+        </h1>
+      </div>
       {/* Top Stats Badge */}
       <a 
         href={`https://datafa.st/share/${process.env.NEXT_PUBLIC_DATAFAST_ID || "dfid_vXi6O2z6DLnvmkHjoQF26"}?period=last24h&granularity=hourly`}
