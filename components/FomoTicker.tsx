@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 const FAKE_EVENTS = [
-  "🔥 @alex just outbid for #3",
+  "🔥 @alex just claimed #3",
   "👀 14 people are viewing the board right now",
   "💸 A new bid of  was just placed",
   "👑 The #1 spot is highly contested today",

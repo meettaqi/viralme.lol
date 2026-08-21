@@ -51,7 +51,7 @@ export default function HomeClient({
 
       {/* Hero Text */}
       <p className="text-center text-lg sm:text-xl text-muted-foreground text-balance max-w-2xl mb-8 leading-relaxed">
-        No ads, no algorithms, no revenue sharing. Just outbid your competition to get to the top. <span className="text-brand-500 font-semibold">Will you take #1 when this site goes viral?</span>
+        No ads, no algorithms, no revenue sharing. Just claim your rank to get to the top. <span className="text-brand-500 font-semibold">Will you take #1 when this site goes viral?</span>
       </p>
 
       {/* Bidding Terminal (Inline) */}

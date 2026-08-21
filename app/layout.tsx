@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "viralme.lol — Pay to rank. Go viral.",
     description:
-      "No ads, no algorithms. Just bids. Outbid the competition, claim #1, and go viral.",
+      "No ads, no algorithms. Just bids. Claim your spot, claim #1, and go viral.",
     url: "https://viralme.lol",
     siteName: "viralme.lol",
     type: "website",

@@ -154,7 +154,7 @@ export default function BidForm({
           disabled={loading}
           className="ml-2 rounded-full bg-brand-500 hover:bg-brand-600 px-6 py-3 text-sm font-bold text-white transition-all disabled:opacity-50 whitespace-nowrap shadow-sm"
         >
-          {loading ? "Loading..." : "Outbid"}
+          {loading ? "Loading..." : "Claim"}
         </button>
       </form>
 

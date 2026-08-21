@@ -32,12 +32,22 @@ function SuccessContent() {
         </ul>
       </div>
 
-      <a
-        href="/"
-        className="mt-8 inline-flex items-center justify-center rounded-full bg-primary px-6 h-11 text-sm font-bold text-primary-foreground hover:bg-primary/80 transition-colors"
-      >
-        See the leaderboard →
-      </a>
+      <div className="mt-8 flex flex-col sm:flex-row gap-3 w-full">
+        <a
+          href="/"
+          className="flex-1 inline-flex items-center justify-center rounded-full bg-primary px-6 h-11 text-sm font-bold text-primary-foreground hover:bg-primary/80 transition-colors"
+        >
+          See the leaderboard →
+        </a>
+        <a
+          href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent("I just claimed a top spot on viralme.lol 🔥 \n\nWill anyone outbid me? 👀 https://viralme.lol")}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-6 h-11 text-sm font-bold text-foreground hover:bg-muted/50 transition-colors"
+        >
+          <span>𝕏</span> Share on X
+        </a>
+      </div>
 
       <Link
         href="/rules"
