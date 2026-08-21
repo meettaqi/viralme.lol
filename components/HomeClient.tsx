@@ -28,16 +28,19 @@ export default function HomeClient({
   return (
     <div className="flex flex-col items-center w-full max-w-3xl mx-auto mt-2 sm:mt-4">
       {/* Top Stats Badge */}
-      <div className="mb-8 inline-flex flex-wrap justify-center items-center gap-2 rounded-full bg-muted/40 border border-border/50 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/60">
+      <a 
+        href={`https://datafa.st/share/${process.env.NEXT_PUBLIC_DATAFAST_ID}?period=last24h&granularity=hourly`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mb-8 inline-flex flex-wrap justify-center items-center gap-2 rounded-full bg-muted/40 border border-border/50 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
+      >
         <LiveDot active color="live" size="sm" />
-        <span className="text-green-500 font-semibold">{initialBids.length} entries active</span>
+        <span className="text-green-500 font-semibold">{initialBids.length} active entries</span>
         <span className="opacity-50">·</span>
         <span>${initialBids.reduce((acc, b) => acc + b.amount, 0).toLocaleString()} volume</span>
         <span className="opacity-50">·</span>
-        <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" })} className="font-semibold text-foreground hover:underline">
-          see stats →
-        </button>
-      </div>
+        <span className="font-semibold text-foreground hover:underline">see stats →</span>
+      </a>
 
       {/* Hero Text */}
       <p className="text-center text-lg sm:text-xl text-muted-foreground text-balance max-w-2xl mb-8 leading-relaxed">
