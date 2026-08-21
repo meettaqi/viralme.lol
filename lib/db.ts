@@ -1,5 +1,10 @@
 import { supabase } from './supabaseClient';
 
+export interface LeadMagnet {
+  offer: string;
+  secret: string;
+}
+
 export interface Bid {
   id: string;
   identity: string;

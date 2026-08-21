@@ -33,6 +33,15 @@ export default function RulesPage() {
         </section>
 
         <section>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">The Lead-Capture Vault</h2>
+          <ul className="space-y-3 pl-1 leading-relaxed text-muted-foreground font-medium">
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Exclusive to #1:</strong> The top spot isn&apos;t just for clicks—it&apos;s a lead generation machine.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Offer &amp; Secret:</strong> When bidding, you can optionally enable the vault by adding an Offer (e.g., &quot;50% Off Lifetime&quot;) and a Secret Code.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Lead Generation:</strong> If you claim #1, visitors must enter their email address to unlock your secret code. These emails are captured securely for your marketing.</span></li>
+          </ul>
+        </section>
+
+        <section>
           <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">How ranking works</h2>
           <ul className="space-y-3 pl-1 leading-relaxed text-muted-foreground font-medium">
             <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>Bids are whole US dollars, <strong className="text-foreground">$2 minimum</strong>, $1 at a time.</span></li>

@@ -11,6 +11,7 @@ import {
 import { fetchOG } from "@/lib/og";
 import { activateTakeover, getTakeover } from "@/lib/takeover";
 import { getSettings } from "@/lib/settings";
+import { saveLeadMagnet } from "@/lib/leads";
 
 const DEMO_MODE =
   !process.env.POLAR_ACCESS_TOKEN ||
@@ -24,6 +25,8 @@ interface RequestBody {
   identity: string; // target identity (for boost/takeover = the entry being boosted/taken over)
   amount?: number; // for bid: desired total bid; for boost: $1-$5
   referredBy?: string;
+  vaultOffer?: string;
+  vaultSecret?: string;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -74,7 +77,7 @@ async function demoHandleTakeover(identity: string, siteUrl: string) {
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as RequestBody;
-    const { type = "bid", identity, amount, referredBy } = body;
+    const { type = "bid", identity, amount, referredBy, vaultOffer, vaultSecret } = body;
 
     if (!identity) {
       return NextResponse.json({ error: "identity required" }, { status: 400 });
@@ -86,6 +89,7 @@ export async function POST(req: NextRequest) {
 
     // ── DEMO MODE ────────────────────────────────────────────────────────────
     if (DEMO_MODE) {
+      if (vaultOffer && vaultSecret) saveLeadMagnet(identity, vaultOffer, vaultSecret);
       if (type === "boost") {
         const boostAmt = Math.min(5, Math.max(1, amount ?? 1));
         return await demoHandleBoost(identity, boostAmt, siteUrl);
@@ -151,7 +155,16 @@ export async function POST(req: NextRequest) {
     const checkout = await polar.checkouts.create({
       products: [productId],
       amount: charge * 100,
-      metadata: { type: "bid", id, identity, amount: String(amount), charge: String(charge), ...(referredBy && { referredBy }) },
+      metadata: { 
+        type: "bid", 
+        id, 
+        identity, 
+        amount: String(amount), 
+        charge: String(charge), 
+        ...(referredBy && { referredBy }),
+        ...(vaultOffer && { vaultOffer: vaultOffer.slice(0, 100) }),
+        ...(vaultSecret && { vaultSecret: vaultSecret.slice(0, 100) })
+      },
       successUrl: `${siteUrl}/success?checkout_id={CHECKOUT_ID}`,
       customerIpAddress: clientIp,
     });

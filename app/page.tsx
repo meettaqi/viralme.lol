@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import HomeClient from "@/components/HomeClient";
 import { getLeaderboard, getTopBid } from "@/lib/db";
+import { getLeadMagnet } from "@/lib/leads";
 import { getTakeover } from "@/lib/takeover";
 import { getSettings } from "@/lib/settings";
 import Link from "next/link";

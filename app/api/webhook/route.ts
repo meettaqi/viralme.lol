@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
   const order = event.data;
   const meta = (order.metadata ?? {}) as Record<string, string>;
-  const { type = "bid", id, identity, amount, referredBy, charge } = meta;
+  const { type = "bid", id, identity, amount, referredBy, charge, vaultOffer, vaultSecret } = meta;
 
   if (!identity || !amount) {
     console.error("[webhook] Missing metadata", order.id);
