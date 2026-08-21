@@ -14,10 +14,22 @@ export default function RulesPage() {
       <article className="flex flex-col gap-10 mt-6 sm:mt-10">
         <section>
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-foreground mb-4">Rules</h1>
-          <p className="text-lg leading-relaxed text-muted-foreground font-medium">
+          <p className="text-lg leading-relaxed text-muted-foreground font-medium mb-4">
             viralme.lol is a public pay-to-rank leaderboard. No ads, no algorithms, no revenue share.
             Your bid is your rank — nothing else decides it.
           </p>
+          <p className="text-lg leading-relaxed text-muted-foreground font-medium">
+            To show you exactly what your rank is worth, we publicly display our <strong className="text-foreground">total unique visitors</strong> and live active users at the top of the board. Every single visitor is a potential customer for the #1 spot.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">Referrals (Shill-to-Boost)</h2>
+          <ul className="space-y-3 pl-1 leading-relaxed text-muted-foreground font-medium">
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Share to Earn:</strong> Click &quot;Earn +$10&quot; next to your entry to copy your unique affiliate link.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>If anyone visits the site via your link and makes a purchase (Bid, Boost, or Takeover), you automatically receive a free boost up to <strong className="text-foreground">+$10</strong>.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>To prevent abuse, the free boost matches the exact amount they spent, capped at a maximum of $10 per referral.</span></li>
+          </ul>
         </section>
 
         <section>
