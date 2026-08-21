@@ -3,6 +3,7 @@
 import { useState } from "react";
 import BidForm from "./BidForm";
 import Leaderboard from "./Leaderboard";
+import FeaturesGuide from "./FeaturesGuide";
 
 import FomoTicker from "./FomoTicker";
 import type { Bid } from "@/lib/db";
@@ -71,6 +72,8 @@ export default function HomeClient({
           takeoverEnabled={takeoverEnabled}
         />
       </div>
+
+      <FeaturesGuide />
 
       {/* Bottom Section: Leaderboard */}
       <div className="w-full">

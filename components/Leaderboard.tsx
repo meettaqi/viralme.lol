@@ -103,7 +103,7 @@ export default function Leaderboard({ initialBids, initialTakeover, onClaimClick
           <p className="text-muted-foreground text-sm mt-1">Be the first to claim #1.</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col bg-card border border-border/50 rounded-xl overflow-hidden shadow-sm">
           {sorted.map((bid, i) => (
             <LeaderboardEntry
               key={bid.id}
