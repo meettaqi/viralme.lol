@@ -50,7 +50,7 @@ function getFaviconUrl(identity: string) {
   }
   try {
     const u = new URL(identity.startsWith("http") ? identity : `https://${identity}`);
-    return `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`;
+    return `https://icon.horse/icon/${u.hostname}`;
   } catch {
     return null;
   }

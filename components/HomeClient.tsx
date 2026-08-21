@@ -62,7 +62,7 @@ export default function HomeClient({
       </p>
 
       {/* Bidding Terminal (Inline) */}
-      <div className="w-full mb-16">
+      <div className="w-full mb-6">
         <BidForm
           key={bidAmount}
           defaultAmount={bidAmount}
@@ -72,8 +72,6 @@ export default function HomeClient({
           takeoverEnabled={takeoverEnabled}
         />
       </div>
-
-      <FeaturesGuide />
 
       {/* Bottom Section: Leaderboard */}
       <div className="w-full">
@@ -85,6 +83,10 @@ export default function HomeClient({
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
         />
+      </div>
+
+      <div className="w-full mt-12">
+        <FeaturesGuide />
       </div>
 
       <FomoTicker />
