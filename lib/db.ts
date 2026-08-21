@@ -1,56 +1,26 @@
-import fs from "fs";
-import path from "path";
-
-const DATA_FILE = path.join(process.cwd(), "data", "bids.json");
+import { supabase } from './supabaseClient';
 
 export interface Bid {
   id: string;
-  identity: string; // URL, @handle, or github.com/...
+  identity: string;
   title: string;
   description: string;
-  amount: number; // effective total (baseAmount + boosts applied)
-  baseAmount: number; // what the owner actually paid
-  boostTotal: number; // total boost contributions from visitors
+  amount: number;
+  baseAmount: number;
+  boostTotal: number;
   clicks: number;
-  createdAt: string; // ISO — when they first bid
-  updatedAt: string; // ISO — last bid/boost
-  heldTopSince?: string; // ISO — when this entry became #1 (cleared if displaced)
-  hallOfFame: boolean; // true if ever held #1 for ≥24h
+  createdAt: string;
+  updatedAt: string;
+  heldTopSince?: string;
+  hallOfFame: boolean;
   paid: boolean;
-  stripeSessionId: string; // used for Polar checkout ID too
-}
-
-// ── File I/O ──────────────────────────────────────────────────────────────────
-
-function readAll(): Bid[] {
-  try {
-    const raw = fs.readFileSync(DATA_FILE, "utf-8");
-    const data = JSON.parse(raw) as Partial<Bid>[];
-    // Migrate legacy records that lack new fields
-    return data.map((b) => ({
-      boostTotal: 0,
-      baseAmount: b.amount ?? 0,
-      hallOfFame: false,
-      updatedAt: b.createdAt ?? new Date().toISOString(),
-      ...b,
-    })) as Bid[];
-  } catch {
-    return [];
-  }
-}
-
-function writeAll(bids: Bid[]): void {
-  const dir = path.dirname(DATA_FILE);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  const tmp = DATA_FILE + ".tmp";
-  fs.writeFileSync(tmp, JSON.stringify(bids, null, 2), "utf-8");
-  fs.renameSync(tmp, DATA_FILE);
+  stripeSessionId: string;
 }
 
 // ── Hall-of-Fame check ────────────────────────────────────────────────────────
 
-/** Called every time we read the leaderboard — promotes HoF if #1 held for 24h */
-function checkAndUpdateHallOfFame(bids: Bid[]): boolean {
+/** Promotes HoF if #1 held for 24h */
+async function checkAndUpdateHallOfFame(bids: Bid[]): Promise<boolean> {
   const paid = bids.filter((b) => b.paid);
   if (paid.length === 0) return false;
 
@@ -64,6 +34,7 @@ function checkAndUpdateHallOfFame(bids: Bid[]): boolean {
   if (topIdx >= 0 && !bids[topIdx].heldTopSince) {
     bids[topIdx].heldTopSince = new Date().toISOString();
     changed = true;
+    await supabase.from('bids').update({ held_top_since: bids[topIdx].heldTopSince }).eq('id', bids[topIdx].id);
   }
 
   // Clear heldTopSince on everyone who is NOT #1
@@ -71,6 +42,7 @@ function checkAndUpdateHallOfFame(bids: Bid[]): boolean {
     if (bids[i].id !== top.id && bids[i].heldTopSince) {
       bids[i].heldTopSince = undefined;
       changed = true;
+      await supabase.from('bids').update({ held_top_since: null }).eq('id', bids[i].id);
     }
   }
 
@@ -84,132 +56,224 @@ function checkAndUpdateHallOfFame(bids: Bid[]): boolean {
     if (held >= 24 * 60 * 60 * 1000) {
       bids[topIdx].hallOfFame = true;
       changed = true;
+      await supabase.from('bids').update({ hall_of_fame: true }).eq('id', bids[topIdx].id);
     }
   }
 
   return changed;
 }
 
-// ── Public API ────────────────────────────────────────────────────────────────
-
-/** Returns paid bids sorted by amount desc, oldest-first on ties */
-export function getLeaderboard(): Bid[] {
-  const bids = readAll();
-  const changed = checkAndUpdateHallOfFame(bids);
-  if (changed) writeAll(bids);
-
-  return bids
-    .filter((b) => b.paid)
-    .sort(
-      (a, b) =>
-        b.amount - a.amount ||
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    );
+function mapBidFromDB(row: any): Bid {
+  return {
+    id: row.id,
+    identity: row.identity,
+    title: row.title,
+    description: row.description,
+    amount: Number(row.amount),
+    baseAmount: Number(row.base_amount),
+    boostTotal: Number(row.boost_total),
+    clicks: row.clicks,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    heldTopSince: row.held_top_since || undefined,
+    hallOfFame: row.hall_of_fame,
+    paid: row.paid,
+    stripeSessionId: row.stripe_session_id,
+  };
 }
 
-/** Current highest bid amount (0 if no paid bids) */
-export function getTopBid(): number {
-  const board = getLeaderboard();
+// ── Public API ────────────────────────────────────────────────────────────────
+
+export async function getLeaderboard(): Promise<Bid[]> {
+  const { data: rows, error } = await supabase
+    .from('bids')
+    .select('*')
+    .eq('paid', true)
+    .order('amount', { ascending: false })
+    .order('created_at', { ascending: true });
+
+  if (error || !rows) return [];
+  
+  const bids = rows.map(mapBidFromDB);
+  await checkAndUpdateHallOfFame(bids);
+  return bids;
+}
+
+export async function getTopBid(): Promise<number> {
+  const board = await getLeaderboard();
   return board.length > 0 ? board[0].amount : 0;
 }
 
-/** How much an identity has already paid (0 if new bidder) */
-export function getCurrentBid(identity: string): number {
-  const bids = readAll();
-  const existing = bids.find((b) => b.identity === identity && b.paid);
-  return existing?.baseAmount ?? 0;
+export async function getCurrentBid(identity: string): Promise<number> {
+  const { data, error } = await supabase
+    .from('bids')
+    .select('base_amount')
+    .eq('identity', identity)
+    .eq('paid', true)
+    .single();
+
+  if (error || !data) return 0;
+  return Number(data.base_amount);
 }
 
-/** Insert / update a pending bid record before payment */
-export function upsertPendingBid(
-  bid: Omit<Bid, "boostTotal" | "hallOfFame" | "updatedAt" | "clicks"> & {
+export async function upsertPendingBid(
+  bid: Omit<Bid, "boostTotal" | "hallOfFame" | "updatedAt" | "clicks" | "id" | "createdAt" | "baseAmount"> & {
     clicks?: number;
     paid?: boolean;
     boostTotal?: number;
     hallOfFame?: boolean;
     updatedAt?: string;
+    id?: string;
+    createdAt?: string;
+    baseAmount?: number;
   }
-): Bid {
-  const bids = readAll();
-  const idx = bids.findIndex((b) => b.identity === bid.identity);
+): Promise<Bid> {
+  const { data: existing, error: findError } = await supabase
+    .from('bids')
+    .select('*')
+    .eq('identity', bid.identity)
+    .single();
+
   const now = new Date().toISOString();
 
-  if (idx >= 0) {
-    const existing = bids[idx];
-    if (bid.amount >= existing.amount) {
-      bids[idx] = {
-        ...existing,
-        ...bid,
+  if (existing) {
+    if (bid.amount >= Number(existing.amount)) {
+      const updateData = {
+        title: bid.title || existing.title,
+        description: bid.description || existing.description,
+        amount: bid.amount,
+        base_amount: bid.baseAmount ?? bid.amount,
         paid: bid.paid ?? existing.paid,
-        boostTotal: bid.boostTotal ?? existing.boostTotal,
-        hallOfFame: existing.hallOfFame, // never downgrade HoF
-        updatedAt: now,
+        boost_total: bid.boostTotal ?? existing.boost_total,
+        stripe_session_id: bid.stripeSessionId,
+        updated_at: now,
       };
+      
+      const { data: updated, error } = await supabase
+        .from('bids')
+        .update(updateData)
+        .eq('id', existing.id)
+        .select()
+        .single();
+      
+      if (updated) return mapBidFromDB(updated);
     }
-    writeAll(bids);
-    return bids[idx];
+    return mapBidFromDB(existing);
   }
 
-  const newBid: Bid = {
-    ...bid,
+  const insertData = {
+    id: crypto.randomUUID(),
+    identity: bid.identity,
+    title: bid.title,
+    description: bid.description,
+    amount: bid.amount,
+    base_amount: bid.baseAmount ?? bid.amount,
+    boost_total: bid.boostTotal ?? 0,
     clicks: bid.clicks ?? 0,
-    boostTotal: 0,
-    hallOfFame: false,
-    paid: false,
-    updatedAt: now,
+    hall_of_fame: bid.hallOfFame ?? false,
+    paid: bid.paid ?? false,
+    stripe_session_id: bid.stripeSessionId,
+    created_at: bid.createdAt || now,
+    updated_at: now,
   };
-  bids.push(newBid);
-  writeAll(bids);
-  return newBid;
+
+  const { data: inserted, error } = await supabase
+    .from('bids')
+    .insert(insertData)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return mapBidFromDB(inserted);
 }
 
-/** Mark a bid as paid (by Polar checkout/session ID) */
-export function confirmPayment(sessionId: string): Bid | null {
-  const bids = readAll();
-  const idx = bids.findIndex((b) => b.stripeSessionId === sessionId);
-  if (idx < 0) return null;
-  bids[idx].paid = true;
-  bids[idx].updatedAt = new Date().toISOString();
-  writeAll(bids);
-  return bids[idx];
+export async function confirmPayment(sessionId: string): Promise<Bid | null> {
+  const { data, error } = await supabase
+    .from('bids')
+    .update({ 
+      paid: true, 
+      updated_at: new Date().toISOString() 
+    })
+    .eq('stripe_session_id', sessionId)
+    .select()
+    .single();
+
+  if (error || !data) return null;
+  return mapBidFromDB(data);
 }
 
-/** Update OG metadata after scraping */
-export function updateOGData(sessionId: string, title: string, description: string): void {
-  const bids = readAll();
-  const idx = bids.findIndex((b) => b.stripeSessionId === sessionId);
-  if (idx >= 0) {
-    bids[idx].title = title;
-    bids[idx].description = description;
-    writeAll(bids);
+export async function updateOGData(sessionId: string, title: string, description: string): Promise<void> {
+  const { data } = await supabase
+    .from('bids')
+    .select('title, description')
+    .eq('stripe_session_id', sessionId)
+    .single();
+
+  if (data) {
+    const newTitle = title || data.title;
+    const newDescription = description || data.description;
+    await supabase
+      .from('bids')
+      .update({ title: newTitle, description: newDescription })
+      .eq('stripe_session_id', sessionId);
   }
 }
 
-/** Apply a visitor boost: adds boostAmount to the entry's amount */
-export function applyBoost(identity: string, boostAmount: number): Bid | null {
-  const bids = readAll();
-  const idx = bids.findIndex((b) => b.identity === identity && b.paid);
-  if (idx < 0) return null;
-  bids[idx].amount += boostAmount;
-  bids[idx].boostTotal = (bids[idx].boostTotal ?? 0) + boostAmount;
-  bids[idx].updatedAt = new Date().toISOString();
-  writeAll(bids);
-  return bids[idx];
+export async function applyBoost(identity: string, boostAmount: number): Promise<Bid | null> {
+  const { data: existing, error: findError } = await supabase
+    .from('bids')
+    .select('*')
+    .eq('identity', identity)
+    .eq('paid', true)
+    .single();
+
+  if (findError || !existing) return null;
+
+  const { data: updated, error } = await supabase
+    .from('bids')
+    .update({
+      amount: Number(existing.amount) + boostAmount,
+      boost_total: Number(existing.boost_total) + boostAmount,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', existing.id)
+    .select()
+    .single();
+
+  if (error || !updated) return null;
+  return mapBidFromDB(updated);
 }
 
-/** Increment click count for an entry */
-export function incrementClicks(identity: string): number {
-  const bids = readAll();
-  const idx = bids.findIndex((b) => b.identity === identity && b.paid);
-  if (idx < 0) return 0;
-  bids[idx].clicks++;
-  writeAll(bids);
-  return bids[idx].clicks;
+export async function incrementClicks(identity: string): Promise<number> {
+  const { data: existing, error: findError } = await supabase
+    .from('bids')
+    .select('id, clicks')
+    .eq('identity', identity)
+    .eq('paid', true)
+    .single();
+
+  if (findError || !existing) return 0;
+
+  const newClicks = existing.clicks + 1;
+  await supabase
+    .from('bids')
+    .update({ clicks: newClicks })
+    .eq('id', existing.id);
+
+  return newClicks;
 }
 
-/** Get all-time Hall of Fame entries (ever held #1 for ≥24h) */
-export function getHallOfFame(): Bid[] {
-  return readAll()
-    .filter((b) => b.hallOfFame && b.paid)
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+export async function getHallOfFame(): Promise<Bid[]> {
+  const { data: rows, error } = await supabase
+    .from('bids')
+    .select('*')
+    .eq('hall_of_fame', true)
+    .eq('paid', true)
+    .order('updated_at', { ascending: false });
+
+  if (error || !rows) return [];
+  return rows.map(mapBidFromDB);
 }

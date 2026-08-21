@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(_req: NextRequest) {
   try {
-    const leaderboard = getLeaderboard();
+    const leaderboard = await getLeaderboard();
     return NextResponse.json(leaderboard, {
       headers: {
         "Cache-Control": "public, s-maxage=5, stale-while-revalidate=10",

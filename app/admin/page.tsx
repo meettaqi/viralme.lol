@@ -3,8 +3,8 @@ import { updateSettingsAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-export default function AdminPage() {
-  const settings = getSettings();
+export default async function AdminPage() {
+  const settings = await getSettings();
 
   return (
     <main className="mx-auto w-full max-w-md px-4 py-20">

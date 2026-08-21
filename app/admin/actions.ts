@@ -15,7 +15,7 @@ export async function updateSettingsAction(formData: FormData) {
   const takeoverDurationHours = parseFloat(formData.get("takeoverDurationHours") as string);
   const takeoverMultiplier = parseFloat(formData.get("takeoverMultiplier") as string);
 
-  updateSettings({
+  await updateSettings({
     takeoverEnabled,
     takeoverDurationHours,
     takeoverMultiplier,

@@ -1,15 +1,13 @@
-import fs from "fs";
-import path from "path";
-
-const FILE = path.join(process.cwd(), "data", "takeover.json");
+import { supabase } from './supabaseClient';
+import { getSettings } from './settings';
 
 export interface TakeoverState {
   active: boolean;
   identity: string;
   title: string;
-  endsAt: string; // ISO — when the 3h lock expires
-  triggeredAt: string; // ISO
-  triggerAmount: number; // 5× at time of trigger
+  endsAt: string;
+  triggeredAt: string;
+  triggerAmount: number;
 }
 
 const EMPTY: TakeoverState = {
@@ -21,39 +19,52 @@ const EMPTY: TakeoverState = {
   triggerAmount: 0,
 };
 
-function read(): TakeoverState {
-  try {
-    const raw = fs.readFileSync(FILE, "utf-8");
-    const data = JSON.parse(raw) as TakeoverState;
-    // Auto-expire
-    if (data.active && data.endsAt && new Date(data.endsAt) < new Date()) {
-      write(EMPTY);
-      return EMPTY;
-    }
-    return data;
-  } catch {
+function mapTakeoverFromDB(row: any): TakeoverState {
+  return {
+    active: row.active,
+    identity: row.identity,
+    title: row.title,
+    endsAt: row.ends_at || "",
+    triggeredAt: row.triggered_at || "",
+    triggerAmount: Number(row.trigger_amount),
+  };
+}
+
+export async function getTakeover(): Promise<TakeoverState> {
+  const { data, error } = await supabase
+    .from('takeover')
+    .select('*')
+    .eq('id', 1)
+    .single();
+
+  if (error || !data) return EMPTY;
+  
+  const state = mapTakeoverFromDB(data);
+
+  if (state.active && state.endsAt && new Date(state.endsAt) < new Date()) {
+    await supabase
+      .from('takeover')
+      .update({
+        active: false,
+        identity: "",
+        title: "",
+        ends_at: null,
+        triggered_at: null,
+        trigger_amount: 0,
+      })
+      .eq('id', 1);
     return EMPTY;
   }
+
+  return state;
 }
 
-function write(state: TakeoverState): void {
-  const dir = path.dirname(FILE);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(FILE, JSON.stringify(state, null, 2), "utf-8");
-}
-
-export function getTakeover(): TakeoverState {
-  return read();
-}
-
-import { getSettings } from "./settings";
-
-export function activateTakeover(
+export async function activateTakeover(
   identity: string,
   title: string,
   triggerAmount: number
-): TakeoverState {
-  const settings = getSettings();
+): Promise<TakeoverState> {
+  const settings = await getSettings();
   const state: TakeoverState = {
     active: true,
     identity,
@@ -62,10 +73,23 @@ export function activateTakeover(
     endsAt: new Date(Date.now() + settings.takeoverDurationHours * 60 * 60 * 1000).toISOString(),
     triggerAmount,
   };
-  write(state);
+
+  await supabase
+    .from('takeover')
+    .update({
+      active: state.active,
+      identity: state.identity,
+      title: state.title,
+      triggered_at: state.triggeredAt,
+      ends_at: state.endsAt,
+      trigger_amount: state.triggerAmount,
+    })
+    .eq('id', 1);
+
   return state;
 }
 
-export function isTakeoverActive(): boolean {
-  return read().active;
+export async function isTakeoverActive(): Promise<boolean> {
+  const state = await getTakeover();
+  return state.active;
 }

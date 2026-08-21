@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { Bid } from "@/lib/db";
 import BoostButton from "./BoostButton";
+import Image from "next/image";
 
 interface Props {
   bid: Bid;
@@ -117,17 +118,20 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
       {/* Favicon / Avatar */}
       <div className="flex-none w-10 h-10 rounded-full flex items-center justify-center text-base font-bold overflow-hidden bg-white border border-border/50 shadow-sm">
         {getFaviconUrl(bid.identity) ? (
-          <img 
+          <Image 
             src={getFaviconUrl(bid.identity)!} 
             alt={bid.identity}
+            width={40}
+            height={40}
             className="w-full h-full object-cover bg-white"
-            loading={rank > 3 ? "lazy" : "eager"}
-            decoding="async"
-            fetchPriority={rank <= 3 ? "high" : "auto"}
+            priority={rank <= 3}
             onError={(e) => {
               e.currentTarget.style.display = "none";
-              e.currentTarget.parentElement!.innerText = avatarLetter(bid.identity);
+              if (e.currentTarget.parentElement) {
+                e.currentTarget.parentElement.innerText = avatarLetter(bid.identity);
+              }
             }}
+            unoptimized
           />
         ) : (
           avatarLetter(bid.identity)

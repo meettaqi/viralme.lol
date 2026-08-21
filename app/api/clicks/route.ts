@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     if (!identity) {
       return NextResponse.json({ error: "identity required" }, { status: 400 });
     }
-    const clicks = incrementClicks(identity);
+    const clicks = await incrementClicks(identity);
     return NextResponse.json({ clicks });
   } catch (err) {
     console.error("[POST /api/clicks]", err);

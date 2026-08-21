@@ -1,10 +1,11 @@
 import Link from "next/link";
+import LiveVisitors from "./LiveVisitors";
 
 export default function Header() {
   return (
     <header className="mt-6 sm:mt-8 mb-8 grid grid-cols-2 sm:grid-cols-3 items-center w-full">
-      {/* Left (Empty spacer on desktop, hidden on mobile) */}
-      <div className="hidden sm:block"></div>
+      {/* Left (Live Visitors on desktop, hidden on mobile) */}
+      <LiveVisitors />
 
       {/* Center Logo */}
       <div className="flex justify-start sm:justify-center">

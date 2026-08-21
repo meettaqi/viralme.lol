@@ -7,11 +7,11 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-export default function Home() {
-  const bids = getLeaderboard();
-  const topBid = getTopBid();
-  const takeover = getTakeover();
-  const settings = getSettings();
+export default async function Home() {
+  const bids = await getLeaderboard();
+  const topBid = await getTopBid();
+  const takeover = await getTakeover();
+  const settings = await getSettings();
   const takeoverCost = topBid > 0 ? topBid * settings.takeoverMultiplier : (settings.takeoverMultiplier * 10 || 50);
 
   return (

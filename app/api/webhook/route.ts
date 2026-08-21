@@ -45,23 +45,23 @@ export async function POST(req: NextRequest) {
   }
 
   const parsedAmount = parseInt(amount, 10);
-  const checkoutId = (order as { checkout_id?: string }).checkout_id ?? order.id;
 
   // ── BOOST ─────────────────────────────────────────────────────────────────
   if (type === "boost") {
-    applyBoost(identity, parsedAmount);
+    await applyBoost(identity, parsedAmount);
     return NextResponse.json({ ok: true });
   }
 
   // ── TAKEOVER ──────────────────────────────────────────────────────────────
   if (type === "takeover") {
     // Don't double-activate if webhook fires twice
-    if (!getTakeover().active) {
-      activateTakeover(identity, identity, parsedAmount);
+    const takeover = await getTakeover();
+    if (!takeover.active) {
+      await activateTakeover(identity, identity, parsedAmount);
       // Scrape title in background
       fetchOG(identity)
-        .then(({ title }) => {
-          if (title) activateTakeover(identity, title, parsedAmount);
+        .then(async ({ title }) => {
+          if (title) await activateTakeover(identity, title, parsedAmount);
         })
         .catch(() => {});
     }
@@ -69,8 +69,7 @@ export async function POST(req: NextRequest) {
   }
 
   // ── BID ───────────────────────────────────────────────────────────────────
-  upsertPendingBid({
-    id: id || generateId(),
+  await upsertPendingBid({
     identity,
     amount: parsedAmount,
     baseAmount: parsedAmount,
@@ -78,11 +77,11 @@ export async function POST(req: NextRequest) {
     description: "",
     createdAt: new Date().toISOString(),
     paid: false,
-    stripeSessionId: checkoutId,
+    stripeSessionId: id,
   });
-  confirmPayment(checkoutId);
+  await confirmPayment(id);
   fetchOG(identity)
-    .then(({ title, description }) => updateOGData(checkoutId, title, description))
+    .then(async ({ title, description }) => await updateOGData(id, title, description))
     .catch(() => {});
 
   return NextResponse.json({ ok: true });

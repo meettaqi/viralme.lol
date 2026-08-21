@@ -26,18 +26,17 @@ interface RequestBody {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function chargeForBid(identity: string, desiredAmount: number): number {
-  const existing = getCurrentBid(identity);
+async function chargeForBid(identity: string, desiredAmount: number): Promise<number> {
+  const existing = await getCurrentBid(identity);
   const charge = existing > 0 ? Math.max(1, desiredAmount - existing) : desiredAmount;
   return charge;
 }
 
 // ── Demo mode handlers ────────────────────────────────────────────────────────
-function demoHandleBid(identity: string, amount: number, siteUrl: string) {
+async function demoHandleBid(identity: string, amount: number, siteUrl: string) {
   const id = generateId();
   const sessionId = "polar_demo_" + id;
-  upsertPendingBid({
-    id,
+  await upsertPendingBid({
     identity,
     amount,
     baseAmount: amount,
@@ -47,26 +46,26 @@ function demoHandleBid(identity: string, amount: number, siteUrl: string) {
     paid: false,
     stripeSessionId: sessionId,
   });
-  confirmPayment(sessionId);
+  await confirmPayment(sessionId);
   fetchOG(identity)
-    .then(({ title, description }) => updateOGData(sessionId, title, description))
+    .then(async ({ title, description }) => await updateOGData(sessionId, title, description))
     .catch(() => {});
   return NextResponse.json({ url: `${siteUrl}/success?demo=1` });
 }
 
-function demoHandleBoost(identity: string, boostAmount: number, siteUrl: string) {
-  applyBoost(identity, boostAmount);
+async function demoHandleBoost(identity: string, boostAmount: number, siteUrl: string) {
+  await applyBoost(identity, boostAmount);
   return NextResponse.json({ url: `${siteUrl}/success?demo=1&type=boost` });
 }
 
-function demoHandleTakeover(identity: string, siteUrl: string) {
-  const settings = getSettings();
+async function demoHandleTakeover(identity: string, siteUrl: string) {
+  const settings = await getSettings();
   if (!settings.takeoverEnabled) {
     return NextResponse.json({ error: "Hostile Takeovers are disabled by the administrator." }, { status: 403 });
   }
-  const topBid = getTopBid();
+  const topBid = await getTopBid();
   const cost = topBid > 0 ? topBid * settings.takeoverMultiplier : (settings.takeoverMultiplier * 10 || 50);
-  activateTakeover(identity, identity, cost);
+  await activateTakeover(identity, identity, cost);
   return NextResponse.json({ url: `${siteUrl}/success?demo=1&type=takeover` });
 }
 
@@ -80,16 +79,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "identity required" }, { status: 400 });
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const host = req.headers.get("host") || "localhost:3000";
+    const protocol = host.includes("localhost") ? "http" : "https";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `${protocol}://${host}`;
 
     // ── DEMO MODE ────────────────────────────────────────────────────────────
     if (DEMO_MODE) {
       if (type === "boost") {
         const boostAmt = Math.min(5, Math.max(1, amount ?? 1));
-        return demoHandleBoost(identity, boostAmt, siteUrl);
+        return await demoHandleBoost(identity, boostAmt, siteUrl);
       }
-      if (type === "takeover") return demoHandleTakeover(identity, siteUrl);
-      return demoHandleBid(identity, amount ?? 1, siteUrl);
+      if (type === "takeover") return await demoHandleTakeover(identity, siteUrl);
+      return await demoHandleBid(identity, amount ?? 1, siteUrl);
     }
 
     // ── LIVE MODE ────────────────────────────────────────────────────────────
@@ -97,8 +98,7 @@ export async function POST(req: NextRequest) {
     if (!productId) {
       return NextResponse.json({ error: "POLAR_PRODUCT_ID not configured" }, { status: 500 });
     }
-    const { getPolar } = await import("@/lib/polar");
-    const polar = getPolar();
+    const { polar } = await import("@/lib/polar");
     const clientIp =
       req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
       req.headers.get("x-real-ip") ??
@@ -109,9 +109,7 @@ export async function POST(req: NextRequest) {
       const id = generateId();
       const checkout = await polar.checkouts.create({
         products: [productId],
-        prices: {
-          [productId]: [{ amountType: "fixed", priceAmount: boostAmt * 100, priceCurrency: "usd" }],
-        },
+        amount: boostAmt * 100,
         metadata: { type: "boost", id, identity, amount: String(boostAmt) },
         successUrl: `${siteUrl}/success?checkout_id={CHECKOUT_ID}&type=boost`,
         customerIpAddress: clientIp,
@@ -120,23 +118,22 @@ export async function POST(req: NextRequest) {
     }
 
     if (type === "takeover") {
-      const settings = getSettings();
+      const settings = await getSettings();
       if (!settings.takeoverEnabled) {
         return NextResponse.json({ error: "Hostile Takeovers are disabled by the administrator." }, { status: 403 });
       }
       
       // Validate: no active takeover already
-      if (getTakeover().active) {
+      const takeoverState = await getTakeover();
+      if (takeoverState.active) {
         return NextResponse.json({ error: "A takeover is already active. Try again after it expires." }, { status: 409 });
       }
-      const topBid = getTopBid();
+      const topBid = await getTopBid();
       const cost = topBid > 0 ? topBid * settings.takeoverMultiplier : (settings.takeoverMultiplier * 10 || 50);
       const id = generateId();
       const checkout = await polar.checkouts.create({
         products: [productId],
-        prices: {
-          [productId]: [{ amountType: "fixed", priceAmount: cost * 100, priceCurrency: "usd" }],
-        },
+        amount: cost * 100,
         metadata: { type: "takeover", id, identity, amount: String(cost) },
         successUrl: `${siteUrl}/success?checkout_id={CHECKOUT_ID}&type=takeover`,
         customerIpAddress: clientIp,
@@ -148,19 +145,16 @@ export async function POST(req: NextRequest) {
     if (!amount || amount < 1) {
       return NextResponse.json({ error: "amount ≥ 1 required" }, { status: 400 });
     }
-    const charge = chargeForBid(identity, amount);
+    const charge = await chargeForBid(identity, amount);
     const id = generateId();
     const checkout = await polar.checkouts.create({
       products: [productId],
-      prices: {
-        [productId]: [{ amountType: "fixed", priceAmount: charge * 100, priceCurrency: "usd" }],
-      },
+      amount: charge * 100,
       metadata: { type: "bid", id, identity, amount: String(amount), charge: String(charge) },
       successUrl: `${siteUrl}/success?checkout_id={CHECKOUT_ID}`,
       customerIpAddress: clientIp,
     });
-    upsertPendingBid({
-      id,
+    await upsertPendingBid({
       identity,
       amount,
       baseAmount: amount,
@@ -168,11 +162,11 @@ export async function POST(req: NextRequest) {
       description: "",
       createdAt: new Date().toISOString(),
       paid: false,
-      stripeSessionId: checkout.id,
+      stripeSessionId: id,
     });
     return NextResponse.json({ url: checkout.url, charge });
-  } catch (err) {
+  } catch (err: any) {
     console.error("[POST /api/checkout]", err);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return NextResponse.json({ error: err.message || "Internal error" }, { status: 500 });
   }
 }

@@ -1,7 +1,4 @@
-import fs from "fs";
-import path from "path";
-
-const SETTINGS_FILE = path.join(process.cwd(), "data", "settings.json");
+import { supabase } from './supabaseClient';
 
 export interface AppSettings {
   takeoverEnabled: boolean;
@@ -15,24 +12,34 @@ const DEFAULT_SETTINGS: AppSettings = {
   takeoverMultiplier: 5,
 };
 
-export function getSettings(): AppSettings {
-  try {
-    if (!fs.existsSync(path.dirname(SETTINGS_FILE))) {
-      fs.mkdirSync(path.dirname(SETTINGS_FILE), { recursive: true });
-    }
-    if (!fs.existsSync(SETTINGS_FILE)) {
-      fs.writeFileSync(SETTINGS_FILE, JSON.stringify(DEFAULT_SETTINGS, null, 2));
-    }
-    const data = fs.readFileSync(SETTINGS_FILE, "utf-8");
-    return { ...DEFAULT_SETTINGS, ...JSON.parse(data) };
-  } catch (err) {
-    return DEFAULT_SETTINGS;
-  }
+export async function getSettings(): Promise<AppSettings> {
+  const { data, error } = await supabase
+    .from('settings')
+    .select('*')
+    .eq('id', 1)
+    .single();
+
+  if (error || !data) return DEFAULT_SETTINGS;
+
+  return {
+    takeoverEnabled: data.takeover_enabled,
+    takeoverDurationHours: data.takeover_duration_hours,
+    takeoverMultiplier: Number(data.takeover_multiplier),
+  };
 }
 
-export function updateSettings(newSettings: Partial<AppSettings>) {
-  const current = getSettings();
+export async function updateSettings(newSettings: Partial<AppSettings>): Promise<AppSettings> {
+  const current = await getSettings();
   const updated = { ...current, ...newSettings };
-  fs.writeFileSync(SETTINGS_FILE, JSON.stringify(updated, null, 2));
+  
+  await supabase
+    .from('settings')
+    .update({
+      takeover_enabled: updated.takeoverEnabled,
+      takeover_duration_hours: updated.takeoverDurationHours,
+      takeover_multiplier: updated.takeoverMultiplier,
+    })
+    .eq('id', 1);
+    
   return updated;
 }

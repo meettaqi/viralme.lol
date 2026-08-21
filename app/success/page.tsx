@@ -32,12 +32,12 @@ function SuccessContent() {
         </ul>
       </div>
 
-      <Link
+      <a
         href="/"
         className="mt-8 inline-flex items-center justify-center rounded-full bg-primary px-6 h-11 text-sm font-bold text-primary-foreground hover:bg-primary/80 transition-colors"
       >
         See the leaderboard →
-      </Link>
+      </a>
 
       <Link
         href="/rules"

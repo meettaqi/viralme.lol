@@ -6,9 +6,9 @@ import { getSettings } from "@/lib/settings";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const takeover = getTakeover();
-  const topBid = getTopBid();
-  const settings = getSettings();
+  const takeover = await getTakeover();
+  const topBid = await getTopBid();
+  const settings = await getSettings();
   const takeoverCost = topBid > 0 ? topBid * settings.takeoverMultiplier : (settings.takeoverMultiplier * 10 || 50);
 
   return NextResponse.json(

@@ -99,7 +99,7 @@ export default function Leaderboard({ initialBids, initialTakeover, onClaimClick
           <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-3">
             <span className="text-xl">👻</span>
           </div>
-          <h3 className="font-semibold text-foreground">It's quiet in here...</h3>
+          <h3 className="font-semibold text-foreground">It&apos;s quiet in here...</h3>
           <p className="text-muted-foreground text-sm mt-1">Be the first to claim #1.</p>
         </div>
       ) : (
