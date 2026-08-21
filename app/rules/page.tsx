@@ -38,7 +38,7 @@ export default function RulesPage() {
           <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">The Lead-Capture Vault</h2>
           <ul className="space-y-3 pl-1 leading-relaxed text-muted-foreground font-medium">
             <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Exclusive to #1:</strong> The top spot isn&apos;t just for clicks—it&apos;s a lead generation machine.</span></li>
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>When bidding, you can optionally enable the vault by adding an Offer (e.g., "50% Off Lifetime") and a Secret Code or Link.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>When bidding, you can optionally enable the vault by adding an Offer (e.g., &quot;50% Off Lifetime&quot;) and a Secret Code or Link.</span></li>
             <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>If you claim #1, visitors must enter their email address to unlock your secret. These emails are captured securely for your marketing.</span></li>
           </ul>
         </section>
