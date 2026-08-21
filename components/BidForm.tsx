@@ -59,7 +59,12 @@ export default function BidForm({
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "bid", identity: identity.trim(), amount }),
+        body: JSON.stringify({ 
+          type: "bid", 
+          identity: identity.trim(), 
+          amount,
+          referredBy: localStorage.getItem("viralme_ref") || undefined 
+        }),
       });
       const data = await res.json();
       if (data.url) window.location.href = data.url;
@@ -82,7 +87,11 @@ export default function BidForm({
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "takeover", identity: identity.trim() }),
+        body: JSON.stringify({ 
+          type: "takeover", 
+          identity: identity.trim(),
+          referredBy: localStorage.getItem("viralme_ref") || undefined
+        }),
       });
       const data = await res.json();
       if (data.url) window.location.href = data.url;

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { Bid } from "@/lib/db";
 import BoostButton from "./BoostButton";
+import ReferralButton from "./ReferralButton";
 import Image from "next/image";
 
 interface Props {
@@ -198,6 +199,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
         )}
         onClick={(e) => e.stopPropagation()}
       >
+        <ReferralButton identity={bid.identity} />
         <BoostButton identity={bid.identity} currentAmount={bid.amount} />
         <button
           onClick={(e) => {

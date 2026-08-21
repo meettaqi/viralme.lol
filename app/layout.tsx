@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { DM_Sans, JetBrains_Mono } from "next/font/google";
+import { Suspense } from "react";
 import Script from "next/script";
+import ReferralTracker from "@/components/ReferralTracker";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -38,6 +40,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${dmSans.variable} ${geistMono.variable}`}>
       <body className="min-h-screen bg-background text-foreground antialiased">
+        <Suspense fallback={null}>
+          <ReferralTracker />
+        </Suspense>
         <Script
           src="https://datafa.st/js/script.js"
           data-website-id="dfid_vXi6O2z6DLnvmkHjoQF26"

@@ -23,6 +23,7 @@ interface RequestBody {
   type: CheckoutType;
   identity: string; // target identity (for boost/takeover = the entry being boosted/taken over)
   amount?: number; // for bid: desired total bid; for boost: $1-$5
+  referredBy?: string;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -73,7 +74,7 @@ async function demoHandleTakeover(identity: string, siteUrl: string) {
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as RequestBody;
-    const { type = "bid", identity, amount } = body;
+    const { type = "bid", identity, amount, referredBy } = body;
 
     if (!identity) {
       return NextResponse.json({ error: "identity required" }, { status: 400 });
@@ -110,7 +111,7 @@ export async function POST(req: NextRequest) {
       const checkout = await polar.checkouts.create({
         products: [productId],
         amount: boostAmt * 100,
-        metadata: { type: "boost", id, identity, amount: String(boostAmt) },
+        metadata: { type: "boost", id, identity, amount: String(boostAmt), ...(referredBy && { referredBy }) },
         successUrl: `${siteUrl}/success?checkout_id={CHECKOUT_ID}&type=boost`,
         customerIpAddress: clientIp,
       });
@@ -134,7 +135,7 @@ export async function POST(req: NextRequest) {
       const checkout = await polar.checkouts.create({
         products: [productId],
         amount: cost * 100,
-        metadata: { type: "takeover", id, identity, amount: String(cost) },
+        metadata: { type: "takeover", id, identity, amount: String(cost), ...(referredBy && { referredBy }) },
         successUrl: `${siteUrl}/success?checkout_id={CHECKOUT_ID}&type=takeover`,
         customerIpAddress: clientIp,
       });
@@ -150,7 +151,7 @@ export async function POST(req: NextRequest) {
     const checkout = await polar.checkouts.create({
       products: [productId],
       amount: charge * 100,
-      metadata: { type: "bid", id, identity, amount: String(amount), charge: String(charge) },
+      metadata: { type: "bid", id, identity, amount: String(amount), charge: String(charge), ...(referredBy && { referredBy }) },
       successUrl: `${siteUrl}/success?checkout_id={CHECKOUT_ID}`,
       customerIpAddress: clientIp,
     });

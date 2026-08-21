@@ -19,7 +19,12 @@ export default function BoostButton({ identity, currentAmount }: Props) {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "boost", identity, amount }),
+        body: JSON.stringify({ 
+          type: "boost", 
+          identity, 
+          amount,
+          referredBy: localStorage.getItem("viralme_ref") || undefined
+        }),
       });
       const data = await res.json();
       if (data.url) window.location.href = data.url;

@@ -37,14 +37,24 @@ export async function POST(req: NextRequest) {
 
   const order = event.data;
   const meta = (order.metadata ?? {}) as Record<string, string>;
-  const { type = "bid", id, identity, amount } = meta;
+  const { type = "bid", id, identity, amount, referredBy, charge } = meta;
 
   if (!identity || !amount) {
     console.error("[webhook] Missing metadata", order.id);
     return NextResponse.json({ ok: true });
   }
 
+
   const parsedAmount = parseInt(amount, 10);
+  const actualCharge = type === "bid" ? parseInt(charge || amount, 10) : parsedAmount;
+
+  if (referredBy && referredBy !== identity) {
+    try {
+      await applyBoost(referredBy, Math.min(10, actualCharge));
+    } catch(err) {
+      console.error("[webhook] error applying referral", err);
+    }
+  }
 
   // ── BOOST ─────────────────────────────────────────────────────────────────
   if (type === "boost") {
