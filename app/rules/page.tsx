@@ -49,14 +49,13 @@ export default function RulesPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">The ViralMe Flywheel</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">The ViralMe Creator Fund</h2>
           <ul className="space-y-3 pl-1 leading-relaxed text-muted-foreground font-medium">
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Every 24 hours</strong>, the total amount spent by the #1 position is recorded.</span></li>
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">30% of that amount</strong> becomes a content/viral marketing budget.</span></li>
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>That budget is used to pay creators and clippers to make content promoting ViralMe (they earn based on verified views).</span></li>
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>Those videos bring new users to the site.</span></li>
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>New users compete for #1, adding more money to the system and spinning the flywheel faster.</span></li>
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Users fund the marketing → creators distribute the marketing → views bring users → users create more revenue.</strong></span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Every 24 hours</strong>, the total amount spent on the #1 position is recorded.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">30% of that amount</strong> goes into a community creator fund.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>This pool rewards independent creators who make entertaining videos and content about the ViralMe leaderboard game.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>Creators earn from the pool based on verified views and community engagement.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>This creates a self-sustaining social ecosystem: players compete on the leaderboard → the prize pool grows → creators are rewarded for making content → the game grows.</span></li>
           </ul>
         </section>
 
