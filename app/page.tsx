@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 async function getLiveVisitors() {
   try {
-    const res = await fetch("https://datafa.st/api/websites/dfid_vXi6O2z6DLnvmkHjoQF26/active", {
+    const res = await fetch("https://datafa.st/api/v1/analytics/realtime?websiteId=dfid_vXi6O2z6DLnvmkHjoQF26", {
       headers: {
         Authorization: `Bearer ${process.env.DATAFAST_ACCESS_TOKEN || "dft_019883c7f1aabe784c45c588b4721d14be06e7b77e2a7be0"}`,
       },
@@ -17,7 +17,7 @@ async function getLiveVisitors() {
     });
     if (!res.ok) return null;
     const data = await res.json();
-    return data?.[0]?.x || data?.x || 0;
+    return data?.data?.[0]?.visitors || 0;
   } catch {
     return null;
   }
