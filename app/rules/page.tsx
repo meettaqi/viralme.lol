@@ -29,7 +29,7 @@ export default function RulesPage() {
             <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>Bids are whole US dollars, <strong className="text-foreground"> minimum</strong>,  at a time.</span></li>
             <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>Paying less than #1 still puts you on the board at whatever rank that bid can take. Equal bids stay in order placed — the older bid keeps the higher rank.</span></li>
             <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Re-bid the same URL or handle to raise your listing.</strong> The new bid must be at least  above the current top. You only pay the difference from your current bid. Someone else cannot steal your rank by paying that difference.</span></li>
-            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>App Store, Play Store, GitHub, and similar platform links are keyed by their path, so different apps don&apos;t share a bid. Tracking query strings are ignored.</span></li>
+            <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span>AI Product, SaaS, Custom GPT, GitHub, and similar platform links are keyed by their path, so different apps don&apos;t share a bid. Tracking query strings are ignored.</span></li>
             <li className="flex gap-3"><span className="text-brand-500 font-bold">—</span> <span><strong className="text-foreground">Hostile Takeover:</strong> Pay 5× the current #1 (minimum ) to forcefully lock your listing in the top spot for 3 hours. A live countdown is shown on your entry. Only one takeover can be active at a time.</span></li>
           </ul>
         </section>
@@ -63,8 +63,8 @@ export default function RulesPage() {
         <section>
           <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">What you can list</h2>
           <ul className="space-y-3 pl-1 leading-relaxed text-muted-foreground font-medium">
-            <li className="flex gap-3"><span className="text-green-500 font-bold">✓</span> <span>A <strong className="text-foreground">product website</strong></span></li>
-            <li className="flex gap-3"><span className="text-green-500 font-bold">✓</span> <span>An <strong className="text-foreground">App Store or Play Store link</strong></span></li>
+            <li className="flex gap-3"><span className="text-green-500 font-bold">✓</span> <span>An <strong className="text-foreground">AI agent or product website</strong></span></li>
+            <li className="flex gap-3"><span className="text-green-500 font-bold">✓</span> <span>A <strong className="text-foreground">ChatGPT, Claude, or SaaS app link</strong></span></li>
             <li className="flex gap-3"><span className="text-green-500 font-bold">✓</span> <span>An <strong className="text-foreground">X / Twitter @handle</strong></span></li>
             <li className="flex gap-3"><span className="text-green-500 font-bold">✓</span> <span>A <strong className="text-foreground">GitHub profile or repository</strong> (github.com/...)</span></li>
             <li className="flex gap-3"><span className="text-red-500 font-bold">✕</span> <span>Chat and invite links are not allowed — Telegram, WhatsApp, Discord, Messenger, Signal, etc. The board is for products and profiles, not group chats.</span></li>

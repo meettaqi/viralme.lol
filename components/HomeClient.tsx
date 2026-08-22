@@ -53,7 +53,7 @@ export default function HomeClient({
         </a>
 
         <h1 className="text-[52px] sm:text-[72px] leading-[1.05] font-extrabold text-[#111827] tracking-tight mb-5">
-          Claim <span className="text-blue-500">#1</span> for your<br/>AI product
+          Claim <span className="text-brand-500">#1</span> for your<br/>AI product
         </h1>
         
         <p className="text-[18px] sm:text-[20px] font-medium text-gray-600 leading-snug max-w-xl mx-auto">

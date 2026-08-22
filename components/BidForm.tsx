@@ -117,18 +117,18 @@ export default function BidForm({
       <div className="flex items-center justify-center gap-4 sm:gap-5 mb-8 mt-2">
         <button 
           onClick={() => adjust(-STEP)}
-          className="w-[52px] h-[52px] sm:w-[60px] sm:h-[60px] rounded-[16px] bg-[#D6EAF8] text-blue-500 flex items-center justify-center hover:bg-[#C2E0F4] transition-colors text-[32px] sm:text-[40px] leading-none font-medium pb-1"
+          className="w-[52px] h-[52px] sm:w-[60px] sm:h-[60px] rounded-[16px] bg-brand-500/10 text-brand-500 flex items-center justify-center hover:bg-brand-500/20 transition-colors text-[32px] sm:text-[40px] leading-none font-medium pb-1"
         >
           -
         </button>
-        <div className="text-blue-500 tabular-nums flex items-center">
+        <div className="text-brand-500 tabular-nums flex items-center">
           <span className="text-[64px] sm:text-[80px] font-extrabold tracking-tight leading-none">
             ${amount}
           </span>
         </div>
         <button 
           onClick={() => adjust(STEP)}
-          className="w-[52px] h-[52px] sm:w-[60px] sm:h-[60px] rounded-[16px] bg-[#D6EAF8] text-blue-500 flex items-center justify-center hover:bg-[#C2E0F4] transition-colors text-[32px] sm:text-[40px] leading-none font-medium pb-1"
+          className="w-[52px] h-[52px] sm:w-[60px] sm:h-[60px] rounded-[16px] bg-brand-500/10 text-brand-500 flex items-center justify-center hover:bg-brand-500/20 transition-colors text-[32px] sm:text-[40px] leading-none font-medium pb-1"
         >
           +
         </button>
@@ -137,7 +137,7 @@ export default function BidForm({
       {/* Input Row Form */}
       <form
         onSubmit={handleBid}
-        className="relative flex items-center w-full max-w-[500px] rounded-full bg-[#E5E7EB] p-2 pl-5 transition-colors focus-within:ring-2 focus-within:ring-blue-500/20 shadow-inner"
+        className="relative flex items-center w-full max-w-[500px] rounded-full bg-[#E5E7EB] p-2 pl-5 transition-colors focus-within:ring-2 focus-within:ring-brand-500/20 shadow-inner"
       >
         <svg className="w-[18px] h-[18px] text-gray-500 mr-2.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
@@ -148,7 +148,7 @@ export default function BidForm({
           type="text"
           value={identity}
           onChange={(e) => setIdentity(e.target.value)}
-          placeholder="App Store link or app name..."
+          placeholder="Your AI product URL or @handle"
           className="flex-1 bg-transparent border-none text-gray-800 text-[15px] sm:text-[16px] font-medium focus:outline-none focus:ring-0 placeholder:text-gray-500"
           required
         />
@@ -156,7 +156,7 @@ export default function BidForm({
         <button
           type="submit"
           disabled={loading || !isVerifiedAi}
-          className="ml-2 rounded-full bg-[#60A5FA] hover:bg-blue-500 px-6 py-3 text-[15px] font-bold text-white transition-all disabled:opacity-50 whitespace-nowrap shadow-[0_4px_10px_-2px_rgba(96,165,250,0.4)]"
+          className="ml-2 rounded-full bg-brand-500 hover:bg-brand-600 px-6 py-3 text-[15px] font-bold text-white transition-all disabled:opacity-50 whitespace-nowrap shadow-md shadow-brand-500/30"
         >
           {loading ? "Loading..." : "Claim #1"}
         </button>
@@ -170,21 +170,21 @@ export default function BidForm({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Short Title (optional, we'll fetch it if left blank)"
-            className="w-full bg-[#E5E7EB] border-none rounded-2xl px-5 py-3.5 text-[15px] font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 placeholder:text-gray-500 text-gray-800 shadow-inner"
+            className="w-full bg-[#E5E7EB] border-none rounded-2xl px-5 py-3.5 text-[15px] font-medium focus:outline-none focus:ring-2 focus:ring-brand-500/20 placeholder:text-gray-500 text-gray-800 shadow-inner"
           />
           <input
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Short Description (optional, we'll fetch it if left blank)"
-            className="w-full bg-[#E5E7EB] border-none rounded-2xl px-5 py-3.5 text-[15px] font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 placeholder:text-gray-500 text-gray-800 shadow-inner"
+            className="w-full bg-[#E5E7EB] border-none rounded-2xl px-5 py-3.5 text-[15px] font-medium focus:outline-none focus:ring-2 focus:ring-brand-500/20 placeholder:text-gray-500 text-gray-800 shadow-inner"
           />
         </div>
       )}
 
       {/* Bottom Subtext */}
       <p className="text-[13px] text-gray-500 font-medium mt-4 mb-6">
-        Already listed? Drop in the same App Store link to push your bid
+        Already listed? Drop in the same URL or @handle to push your bid
       </p>
 
       {/* Strict AI Checkbox Deterrent */}
@@ -194,7 +194,7 @@ export default function BidForm({
           id={`${formId}-verify`}
           checked={isVerifiedAi}
           onChange={(e) => setIsVerifiedAi(e.target.checked)}
-          className="mt-1 shrink-0 accent-blue-500 w-4 h-4 rounded border-gray-300"
+          className="mt-1 shrink-0 accent-brand-500 w-4 h-4 rounded border-gray-300"
         />
         <label htmlFor={`${formId}-verify`} className="text-[13px] text-gray-600 cursor-pointer">
           <strong className="text-gray-900 block mb-1 text-[14px]">I confirm this is an AI Agent or Product.</strong>

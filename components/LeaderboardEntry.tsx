@@ -96,7 +96,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
 
         {/* Left Column */}
         <div className="flex shrink-0 flex-col items-center gap-1.5 z-20">
-          <span className="text-[18px] sm:text-[22px] font-extrabold text-[#1F549E]">
+          <span className="text-[18px] sm:text-[22px] font-extrabold text-brand-600">
             #{rank}
           </span>
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[14px] border border-black/5 bg-gray-50 overflow-hidden flex items-center justify-center">
@@ -133,11 +133,11 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
               >
                 {bid.title || bid.identity.replace(/^https?:\/\//, '')}
               </a>
-              <span className="flex-shrink-0 text-blue-500 mt-1" title="Verified AI Product">
+              <span className="flex-shrink-0 text-brand-500 mt-1" title="Verified AI Product">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
               </span>
             </div>
-            <span className="shrink-0 text-[24px] sm:text-[28px] font-extrabold tabular-nums text-blue-500">
+            <span className="shrink-0 text-[24px] sm:text-[28px] font-extrabold tabular-nums text-brand-500">
               {formatUSD(bid.amount)}
             </span>
           </div>
@@ -153,7 +153,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
           )}
 
           <div className="flex items-center flex-wrap gap-3 mt-2 pointer-events-auto relative z-30">
-            <span className="shrink-0 px-2.5 py-1 text-[13px] font-bold bg-blue-50 text-blue-600 rounded-md flex items-center gap-1.5">
+            <span className="shrink-0 px-2.5 py-1 text-[13px] font-bold bg-brand-500/10 text-brand-600 rounded-md flex items-center gap-1.5">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
               {bid.clicks || 0} clicks
             </span>
@@ -244,11 +244,11 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
             >
               {bid.title || bid.identity.replace(/^https?:\/\//, '')}
             </a>
-            <span className="flex-shrink-0 flex items-center text-blue-500 mt-0.5" title="Verified AI Product">
+            <span className="flex-shrink-0 flex items-center text-brand-500 mt-0.5" title="Verified AI Product">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </span>
           </div>
-          <span className="shrink-0 text-[18px] sm:text-[22px] font-semibold tabular-nums text-blue-500">
+          <span className="shrink-0 text-[18px] sm:text-[22px] font-semibold tabular-nums text-brand-500">
             {formatUSD(bid.amount)}
           </span>
         </div>
@@ -264,7 +264,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
         )}
         
         <div className="flex items-center flex-wrap gap-2.5 mt-1 pointer-events-auto relative z-30">
-          <span className="shrink-0 px-2 py-0.5 text-[12px] sm:text-[13px] font-semibold bg-blue-50 text-blue-600 rounded flex items-center gap-1">
+          <span className="shrink-0 px-2 py-0.5 text-[12px] sm:text-[13px] font-semibold bg-brand-500/10 text-brand-600 rounded flex items-center gap-1">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
             {bid.clicks || 0} clicks
           </span>
