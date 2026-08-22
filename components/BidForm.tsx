@@ -26,6 +26,7 @@ export default function BidForm({
   const [loading, setLoading] = useState(false);
   const [takingOver, setTakingOver] = useState(false);
   const [error, setError] = useState("");
+  const [isVerifiedAi, setIsVerifiedAi] = useState(false);
   const formId = useId();
 
   // Very naive projection
@@ -40,6 +41,7 @@ export default function BidForm({
 
   function validateIdentity(val: string): string {
     if (!val.trim()) return "Please enter a URL or handle.";
+    if (!isVerifiedAi) return "You must confirm this is an AI product.";
     const v = val.trim().toLowerCase();
     const blocked = ["t.me/", "discord.gg/", "wa.me/", "whatsapp", "messenger", "signal"];
     if (blocked.some((b) => v.includes(b))) return "Chat/invite links are not allowed.";
@@ -144,19 +146,33 @@ export default function BidForm({
           type="text"
           value={identity}
           onChange={(e) => setIdentity(e.target.value)}
-          placeholder="Your product URL, @handle, or App Store link"
+          placeholder="Your AI product URL or @handle"
           className="flex-1 bg-transparent border-none text-foreground text-sm sm:text-base focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
           required
         />
         
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !isVerifiedAi}
           className="ml-2 rounded-full bg-brand-500 hover:bg-brand-600 px-6 py-3 text-sm font-bold text-white transition-all disabled:opacity-50 whitespace-nowrap shadow-sm"
         >
           {loading ? "Loading..." : "Claim"}
         </button>
       </form>
+      
+      {/* Strict AI Checkbox Deterrent */}
+      <div className="mt-4 flex items-start gap-2 max-w-xl mx-auto text-left">
+        <input 
+          type="checkbox" 
+          id={`${formId}-verify`}
+          checked={isVerifiedAi}
+          onChange={(e) => setIsVerifiedAi(e.target.checked)}
+          className="mt-1 shrink-0 accent-brand-500 w-4 h-4 rounded border-border"
+        />
+        <label htmlFor={`${formId}-verify`} className="text-xs text-muted-foreground cursor-pointer">
+          <strong className="text-foreground">I confirm this is an AI Agent or Product.</strong> Non-AI submissions will be permanently deleted without a refund.
+        </label>
+      </div>
 
       {error && <p className="text-xs font-medium text-red-400 bg-red-400/10 py-2 px-3 rounded-md border border-red-400/20 mt-4">{error}</p>}
 
@@ -168,13 +184,13 @@ export default function BidForm({
       {takeoverEnabled && (
         <button
           type="button"
-          disabled={takingOver || takeoverActive || !identity.trim()}
+          disabled={takingOver || takeoverActive || !identity.trim() || !isVerifiedAi}
           onClick={handleTakeover}
           className={cn(
             "px-4 py-1.5 rounded-full text-xs font-bold transition-all border",
             takeoverActive
               ? "bg-muted/50 border-border/30 text-muted-foreground cursor-not-allowed"
-              : !identity.trim()
+              : (!identity.trim() || !isVerifiedAi)
               ? "bg-muted/30 border-border/30 text-muted-foreground cursor-not-allowed opacity-70"
               : "bg-orange-500/10 border-orange-500/30 text-orange-500 hover:bg-orange-500/20 shadow-sm"
           )}

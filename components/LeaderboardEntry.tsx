@@ -134,13 +134,21 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
         
         {/* Title & Price Row */}
         <div className="flex items-baseline justify-between gap-3">
-          <a 
-            href={href} 
-            target="_blank" 
-            className="min-w-0 truncate text-[16px] leading-[1.25] font-semibold tracking-[-0.4px] text-foreground hover:underline sm:text-[18px] pointer-events-auto"
-          >
-            {bid.title || bid.identity.replace(/^https?:\/\//, '')}
-          </a>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <a 
+              href={href} 
+              target="_blank" 
+              className="truncate text-[16px] leading-[1.25] font-semibold tracking-[-0.4px] text-foreground hover:underline sm:text-[18px] pointer-events-auto"
+            >
+              {bid.title || bid.identity.replace(/^https?:\/\//, '')}
+            </a>
+            <span 
+              className="flex-shrink-0 flex items-center text-blue-500 mt-0.5"
+              title="Verified AI Product"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </span>
+          </div>
           <span className={cn(
             "shrink-0 text-[18px] sm:text-[22px] font-bold tabular-nums",
             isTop3 ? "text-brand-500" : "text-foreground"
