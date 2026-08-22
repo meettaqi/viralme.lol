@@ -57,6 +57,9 @@ function getFaviconUrl(identity: string) {
 }
 
 export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }: Props) {
+  const [clicks, setClicks] = useState(bid.clicks || 0);
+  const [tracked, setTracked] = useState(false);
+
   const isTop3 = rank <= 3;
   const claimAmount = bid.amount + 1;
   const href = bid.identity.startsWith("http")
@@ -68,6 +71,9 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
     : `https://${bid.identity}`;
 
   function handleTrack() {
+    if (tracked) return;
+    setTracked(true);
+    setClicks(prev => prev + 1);
     fetch("/api/clicks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -129,7 +135,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
               <a 
                 href={href} 
                 target="_blank" 
-                className="truncate text-[20px] leading-[1.2] font-bold tracking-[-0.5px] text-gray-900 hover:underline sm:text-[24px] pointer-events-auto"
+                onClick={handleTrack} className="truncate text-[20px] leading-[1.2] font-bold tracking-[-0.5px] text-gray-900 hover:underline sm:text-[24px] pointer-events-auto"
               >
                 {bid.title || bid.identity.replace(/^https?:\/\//, '')}
               </a>
@@ -155,7 +161,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
           <div className="flex items-center flex-wrap gap-3 mt-2 pointer-events-auto relative z-30">
             <span className="shrink-0 px-2.5 py-1 text-[13px] font-bold bg-brand-500/10 text-brand-600 rounded-md flex items-center gap-1.5">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-              {bid.clicks || 0} clicks
+              {clicks} clicks
             </span>
             <time className="min-w-0 flex-1 truncate text-[13px] tracking-[-0.26px] text-gray-400 font-medium">
               {timeAgo(bid.updatedAt || bid.createdAt)}
@@ -240,7 +246,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
             <a 
               href={href} 
               target="_blank" 
-              className="truncate text-[16px] leading-[1.25] font-semibold tracking-[-0.4px] text-gray-900 hover:underline sm:text-[18px] pointer-events-auto"
+              onClick={handleTrack} className="truncate text-[16px] leading-[1.25] font-semibold tracking-[-0.4px] text-gray-900 hover:underline sm:text-[18px] pointer-events-auto"
             >
               {bid.title || bid.identity.replace(/^https?:\/\//, '')}
             </a>
@@ -266,7 +272,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
         <div className="flex items-center flex-wrap gap-2.5 mt-1 pointer-events-auto relative z-30">
           <span className="shrink-0 px-2 py-0.5 text-[12px] sm:text-[13px] font-semibold bg-brand-500/10 text-brand-600 rounded flex items-center gap-1">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-            {bid.clicks || 0} clicks
+            {clicks} clicks
           </span>
           <time className="min-w-0 flex-1 truncate text-[12px] sm:text-[13px] tracking-[-0.26px] text-gray-400 font-medium">
             {timeAgo(bid.updatedAt || bid.createdAt)}

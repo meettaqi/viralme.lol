@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST() {
   try {
-    const totalVisitors = incrementTotalVisitors();
+    const totalVisitors = await incrementTotalVisitors();
     return NextResponse.json({ totalVisitors });
   } catch (err) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
