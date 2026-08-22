@@ -79,13 +79,9 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
   return (
     <article
       className={cn(
-        "relative flex w-full cursor-pointer items-start gap-3 px-3.5 py-3 transition hover:bg-muted/30 sm:gap-4 sm:px-5 sm:py-[14px]",
-        "border-b border-border/50 last:border-b-0",
-        // Top 3 specific border/bg to satisfy "all 3" request while maintaining layout
-        rank === 1 && "rounded-[1.5rem] border-2 border-brand-500 bg-brand-500/5 hover:bg-brand-500/10",
-        rank === 2 && "rounded-[1.5rem] border border-brand-500/60 bg-card hover:bg-muted/30",
-        rank === 3 && "rounded-[1.5rem] border border-brand-500/30 bg-card hover:bg-muted/30",
-        isTakeover && "ring-2 ring-yellow-500 shadow-sm"
+        "relative flex w-full cursor-pointer items-start gap-3 px-3.5 py-3 transition hover:bg-gray-50 sm:gap-4 sm:px-5 sm:py-[14px]",
+        "border-b border-gray-100 last:border-b-0 bg-white",
+        isTakeover && "bg-yellow-50/50"
       )}
     >
       {/* Invisible link overlay */}
@@ -100,19 +96,16 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
 
       {/* Rank & Icon (Left Column) */}
       <div className="flex shrink-0 flex-col items-center gap-1 z-20">
-        <span className={cn(
-          "text-[13px] font-semibold sm:text-[14px]",
-          isTop3 ? "bg-brand-500 text-white rounded-full px-2 py-0.5 shadow-sm text-xs" : "text-muted-foreground"
-        )}>
+        <span className="text-[13px] font-semibold text-gray-400 sm:text-[14px]">
           #{rank}
         </span>
-        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[10px] border border-black/10 bg-white overflow-hidden flex items-center justify-center shadow-sm">
+        <div className="w-11 h-11 sm:w-11 sm:h-11 rounded-[10px] border border-black/5 bg-gray-50 overflow-hidden flex items-center justify-center">
           {getFaviconUrl(bid.identity) ? (
             <Image 
               src={getFaviconUrl(bid.identity)!} 
               alt={bid.identity}
-              width={48}
-              height={48}
+              width={44}
+              height={44}
               className="w-full h-full object-cover"
               priority={rank <= 3}
               onError={(e) => {
@@ -124,7 +117,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
               unoptimized
             />
           ) : (
-            <span className="font-bold text-lg text-muted-foreground">{avatarLetter(bid.identity)}</span>
+            <span className="font-bold text-lg text-gray-400">{avatarLetter(bid.identity)}</span>
           )}
         </div>
       </div>
@@ -138,7 +131,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
             <a 
               href={href} 
               target="_blank" 
-              className="truncate text-[16px] leading-[1.25] font-semibold tracking-[-0.4px] text-foreground hover:underline sm:text-[18px] pointer-events-auto"
+              className="truncate text-[16px] leading-[1.25] font-semibold tracking-[-0.4px] text-gray-900 hover:underline sm:text-[18px] pointer-events-auto"
             >
               {bid.title || bid.identity.replace(/^https?:\/\//, '')}
             </a>
@@ -149,32 +142,29 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </span>
           </div>
-          <span className={cn(
-            "shrink-0 text-[18px] sm:text-[22px] font-bold tabular-nums",
-            isTop3 ? "text-brand-500" : "text-foreground"
-          )}>
+          <span className="shrink-0 text-[18px] sm:text-[22px] font-semibold tabular-nums text-gray-900">
             {formatUSD(bid.amount)}
           </span>
         </div>
         
         {/* Description Row */}
         {bid.description ? (
-          <p className="truncate text-[13px] leading-[1.4] font-medium tracking-[-0.2px] text-muted-foreground sm:text-[14px]">
+          <p className="truncate text-[13px] leading-[1.4] font-medium tracking-[-0.2px] text-gray-500 sm:text-[14px]">
             {bid.description}
           </p>
         ) : (
-          <p className="truncate text-[13px] leading-[1.4] font-medium tracking-[-0.2px] text-muted-foreground sm:text-[14px]">
+          <p className="truncate text-[13px] leading-[1.4] font-medium tracking-[-0.2px] text-gray-500 sm:text-[14px]">
             {formatUrl(bid.identity)}
           </p>
         )}
         
         {/* Bottom Meta & Actions Row */}
         <div className="flex items-center flex-wrap gap-2.5 mt-1 pointer-events-auto relative z-30">
-          <span className="shrink-0 px-2 py-0.5 text-[12px] sm:text-[13px] font-medium bg-muted text-muted-foreground rounded-md flex items-center gap-1">
+          <span className="shrink-0 px-2 py-0.5 text-[12px] sm:text-[13px] font-medium bg-gray-100 text-gray-500 rounded flex items-center gap-1">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
             {bid.clicks || 0} clicks
           </span>
-          <time className="min-w-0 flex-1 truncate text-[12px] sm:text-[13px] tracking-[-0.26px] text-muted-foreground font-medium">
+          <time className="min-w-0 flex-1 truncate text-[12px] sm:text-[13px] tracking-[-0.26px] text-gray-400 font-medium">
             {timeAgo(bid.updatedAt || bid.createdAt)}
           </time>
           
@@ -182,7 +172,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
             <BoostButton identity={bid.identity} currentAmount={bid.amount} />
             <ReferralButton identity={bid.identity} />
             <button 
-              className="shrink-0 tracking-[-0.5px] bg-brand-500/10 text-brand-600 font-semibold px-3 py-[5px] text-[13px] sm:px-[14px] sm:py-[6px] sm:text-[15px] rounded-full hover:bg-brand-500 hover:text-white transition-colors shadow-sm"
+              className="shrink-0 tracking-[-0.5px] bg-orange-100 text-orange-600 font-semibold px-3 py-[5px] text-[13px] sm:px-[14px] sm:py-[6px] sm:text-[15px] rounded-full hover:bg-orange-200 transition-colors shadow-none"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -196,7 +186,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
 
         {/* Lead Vault (If #1) */}
         {rank === 1 && bid.leadMagnet && (
-          <div className="mt-2 w-full relative z-30 pointer-events-auto">
+          <div className="mt-3 w-full relative z-30 pointer-events-auto">
             <LeadVault 
               identity={bid.identity} 
               leadMagnet={bid.leadMagnet} 

@@ -40,7 +40,7 @@ export default async function Home() {
   const takeoverCost = topBid > 0 ? topBid * settings.takeoverMultiplier : (settings.takeoverMultiplier * 10 || 50);
 
   return (
-    <div className="relative min-h-screen selection:bg-brand-500/30 bg-background">
+    <div className="relative min-h-screen selection:bg-brand-500/30">
       <main className="mx-auto w-full max-w-5xl px-4 pt-6 pb-12 min-h-[calc(100vh-100px)]">
         <Header liveVisitors={liveVisitors} />
         <HomeClient
