@@ -3,6 +3,7 @@ import { DM_Sans, JetBrains_Mono } from "next/font/google";
 import { Suspense } from "react";
 import Script from "next/script";
 import ReferralTracker from "@/components/ReferralTracker";
+import DataFastTracker from "@/components/DataFastTracker";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -53,12 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Suspense fallback={null}>
           <ReferralTracker />
         </Suspense>
-        <Script
-          src="https://datafa.st/js/script.js"
-          data-website-id="dfid_vXi6O2z6DLnvmkHjoQF26"
-          data-domain="viralme.lol"
-          strategy="afterInteractive"
-        />
+        <DataFastTracker />
         {children}
       </body>
     </html>

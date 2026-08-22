@@ -36,7 +36,7 @@ export default function HomeClient({
       <div className="text-center mb-2 max-w-3xl mx-auto flex flex-col items-center">
         {/* Top Stats Badge */}
         <a 
-          href={`https://datafa.st/share/${process.env.NEXT_PUBLIC_DATAFAST_ID || "dfid_vXi6O2z6DLnvmkHjoQF26"}?period=last24h&granularity=hourly`}
+          href="https://datafa.st/share/6a88058f18a92e2689e02ab1"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex justify-center items-center gap-3 rounded-full bg-white shadow-[0_4px_15px_-3px_rgba(0,0,0,0.08)] px-4 py-2 text-[14px] font-semibold text-gray-500 transition-transform hover:-translate-y-0.5 mb-2"

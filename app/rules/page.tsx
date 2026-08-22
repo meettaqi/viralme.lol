@@ -64,7 +64,7 @@ export default function RulesPage() {
           <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">What you can list</h2>
           <ul className="space-y-3 pl-1 leading-relaxed text-muted-foreground font-medium">
             <li className="flex gap-3"><span className="text-green-500 font-bold">✓</span> <span>An <strong className="text-foreground">AI agent or product website</strong></span></li>
-            <li className="flex gap-3"><span className="text-green-500 font-bold">✓</span> <span>A <strong className="text-foreground">ChatGPT, Claude, or SaaS app link</strong></span></li>
+            <li className="flex gap-3"><span className="text-green-500 font-bold">✓</span> <span>A <strong className="text-foreground">ChatGPT, Claude, SaaS, App Store, or Play Store link</strong> (must be an AI product)</span></li>
             <li className="flex gap-3"><span className="text-green-500 font-bold">✓</span> <span>An <strong className="text-foreground">X / Twitter @handle</strong></span></li>
             <li className="flex gap-3"><span className="text-green-500 font-bold">✓</span> <span>A <strong className="text-foreground">GitHub profile or repository</strong> (github.com/...)</span></li>
             <li className="flex gap-3"><span className="text-red-500 font-bold">✕</span> <span>Chat and invite links are not allowed — Telegram, WhatsApp, Discord, Messenger, Signal, etc. The board is for products and profiles, not group chats.</span></li>
