@@ -76,26 +76,15 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
     }).catch(() => {});
   }
 
-  // Get specific styles for top 3
-  const getContainerStyle = () => {
-    if (rank === 1) return "rounded-[1.5rem] border-2 border-brand-500 bg-brand-500/5 p-4 sm:p-5";
-    if (rank === 2) return "rounded-[1.5rem] border border-brand-500/60 bg-card p-4 sm:p-5";
-    if (rank === 3) return "rounded-[1.5rem] border border-brand-500/30 bg-card p-4 sm:p-5";
-    return "border-b border-border/50 py-4 sm:py-5 px-1 sm:px-4 bg-transparent";
-  };
-
-  const getRankStyle = () => {
-    if (rank === 1) return "bg-brand-500 text-white shadow-sm";
-    if (rank === 2) return "bg-brand-500/80 text-white shadow-sm";
-    if (rank === 3) return "bg-brand-500/60 text-white shadow-sm";
-    return "";
-  };
-
   return (
-    <div
+    <article
       className={cn(
-        "relative group transition-colors w-full flex flex-col hover:bg-muted/10",
-        getContainerStyle(),
+        "relative flex w-full cursor-pointer items-start gap-3 px-3.5 py-3 transition hover:bg-muted/30 sm:gap-4 sm:px-5 sm:py-[14px]",
+        "border-b border-border/50 last:border-b-0",
+        // Top 3 specific border/bg to satisfy "all 3" request while maintaining layout
+        rank === 1 && "rounded-[1.5rem] border-2 border-brand-500 bg-brand-500/5 hover:bg-brand-500/10",
+        rank === 2 && "rounded-[1.5rem] border border-brand-500/60 bg-card hover:bg-muted/30",
+        rank === 3 && "rounded-[1.5rem] border border-brand-500/30 bg-card hover:bg-muted/30",
         isTakeover && "ring-2 ring-yellow-500 shadow-sm"
       )}
     >
@@ -109,32 +98,22 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
         aria-label={`Visit ${bid.title || bid.identity}`}
       />
 
-      <div className="flex items-start sm:items-center w-full gap-3 sm:gap-5 relative">
-        {/* Rank */}
-        <div className="flex-none w-8 sm:w-10 pt-1.5 sm:pt-0 flex justify-end">
-          {isTop3 ? (
-            <span className={cn(
-              "flex items-center justify-center h-6 px-2.5 rounded-full text-xs font-bold",
-              getRankStyle()
-            )}>
-              #{rank}
-            </span>
-          ) : (
-            <span className="text-sm font-semibold text-muted-foreground mr-1">
-              #{rank}
-            </span>
-          )}
-        </div>
-
-        {/* Icon */}
-        <div className="flex-none w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden bg-white border border-border/30 shadow-sm flex items-center justify-center text-xl font-bold mt-1 sm:mt-0">
+      {/* Rank & Icon (Left Column) */}
+      <div className="flex shrink-0 flex-col items-center gap-1 z-20">
+        <span className={cn(
+          "text-[13px] font-semibold sm:text-[14px]",
+          isTop3 ? "bg-brand-500 text-white rounded-full px-2 py-0.5 shadow-sm text-xs" : "text-muted-foreground"
+        )}>
+          #{rank}
+        </span>
+        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-[10px] border border-black/10 bg-white overflow-hidden flex items-center justify-center shadow-sm">
           {getFaviconUrl(bid.identity) ? (
             <Image 
               src={getFaviconUrl(bid.identity)!} 
               alt={bid.identity}
-              width={56}
-              height={56}
-              className="w-full h-full object-cover bg-white"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
               priority={rank <= 3}
               onError={(e) => {
                 e.currentTarget.style.display = "none";
@@ -145,91 +124,78 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
               unoptimized
             />
           ) : (
-            avatarLetter(bid.identity)
+            <span className="font-bold text-lg text-muted-foreground">{avatarLetter(bid.identity)}</span>
           )}
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0 flex flex-col justify-center">
-          <div className="flex items-center justify-between w-full pr-1">
-            <span className="font-bold text-lg sm:text-xl truncate text-foreground tracking-tight pr-4">
-              {bid.title || bid.identity.replace(/^https?:\/\//, '')}
-            </span>
-            {/* Amount floating right on top line */}
-            <span
-              className={cn(
-                "font-bold tabular-nums text-xl sm:text-2xl flex-none ml-2 tracking-tight",
-                isTop3 ? "text-brand-500" : "text-foreground"
-              )}
-            >
-              {formatUSD(bid.amount)}
-            </span>
-          </div>
-          
-          {bid.description ? (
-            <p className="text-xs sm:text-sm text-muted-foreground leading-snug line-clamp-1 sm:line-clamp-2 pr-4 mt-0.5">
-              {bid.description}
-            </p>
-          ) : (
-            <p className="text-xs sm:text-sm text-muted-foreground leading-snug truncate mt-0.5">
-              {formatUrl(bid.identity)}
-            </p>
-          )}
-
-          <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted-foreground font-medium mt-1.5">
-            <span className="text-brand-500/80">{timeAgo(bid.updatedAt || bid.createdAt)}</span>
-            <span className="text-brand-500 text-[10px]">●</span>
-            <span className="text-foreground font-semibold">{bid.clicks || 0} clicks</span>
-
-            {bid.boostTotal > 0 && (
-              <>
-                <span className="opacity-50 mx-1">·</span>
-                <span className="text-brand-500">+{formatUSD(bid.boostTotal)} boosted</span>
-              </>
-            )}
-            
-            {bid.hallOfFame && (
-              <>
-                <span className="opacity-50 mx-1">·</span>
-                <span className="text-yellow-600 font-bold uppercase tracking-wider">👑 HoF</span>
-              </>
-            )}
-          </div>
         </div>
       </div>
 
-      {/* Hover Action Overlay */}
-      <div 
-        className="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30"
-      >
-        <div className="bg-card shadow-lg border border-border/50 rounded-lg p-1.5 flex items-center gap-1.5 backdrop-blur-md">
-          <div onClick={(e) => e.stopPropagation()}>
-            <BoostButton identity={bid.identity} currentAmount={bid.amount} />
-          </div>
-          <div onClick={(e) => e.stopPropagation()}>
-            <ReferralButton identity={bid.identity} />
-          </div>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onClaimClick?.(claimAmount);
-            }}
-            className="flex items-center justify-center rounded bg-brand-500 hover:bg-brand-600 text-white px-3 py-1.5 text-xs font-bold transition-all shadow-sm whitespace-nowrap"
+      {/* Content (Right Column) */}
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5 z-20 pointer-events-none">
+        
+        {/* Title & Price Row */}
+        <div className="flex items-baseline justify-between gap-3">
+          <a 
+            href={href} 
+            target="_blank" 
+            className="min-w-0 truncate text-[16px] leading-[1.25] font-semibold tracking-[-0.4px] text-foreground hover:underline sm:text-[18px] pointer-events-auto"
           >
-            Outbid {formatUSD(claimAmount)}
-          </button>
+            {bid.title || bid.identity.replace(/^https?:\/\//, '')}
+          </a>
+          <span className={cn(
+            "shrink-0 text-[18px] sm:text-[22px] font-bold tabular-nums",
+            isTop3 ? "text-brand-500" : "text-foreground"
+          )}>
+            {formatUSD(bid.amount)}
+          </span>
         </div>
-      </div>
+        
+        {/* Description Row */}
+        {bid.description ? (
+          <p className="truncate text-[13px] leading-[1.4] font-medium tracking-[-0.2px] text-muted-foreground sm:text-[14px]">
+            {bid.description}
+          </p>
+        ) : (
+          <p className="truncate text-[13px] leading-[1.4] font-medium tracking-[-0.2px] text-muted-foreground sm:text-[14px]">
+            {formatUrl(bid.identity)}
+          </p>
+        )}
+        
+        {/* Bottom Meta & Actions Row */}
+        <div className="flex items-center flex-wrap gap-2.5 mt-1 pointer-events-auto relative z-30">
+          <span className="shrink-0 px-2 py-0.5 text-[12px] sm:text-[13px] font-medium bg-muted text-muted-foreground rounded-md flex items-center gap-1">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            {bid.clicks || 0} clicks
+          </span>
+          <time className="min-w-0 flex-1 truncate text-[12px] sm:text-[13px] tracking-[-0.26px] text-muted-foreground font-medium">
+            {timeAgo(bid.updatedAt || bid.createdAt)}
+          </time>
+          
+          <div className="flex items-center gap-2">
+            <BoostButton identity={bid.identity} currentAmount={bid.amount} />
+            <ReferralButton identity={bid.identity} />
+            <button 
+              className="shrink-0 tracking-[-0.5px] bg-brand-500/10 text-brand-600 font-semibold px-3 py-[5px] text-[13px] sm:px-[14px] sm:py-[6px] sm:text-[15px] rounded-full hover:bg-brand-500 hover:text-white transition-colors shadow-sm"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onClaimClick?.(claimAmount);
+              }}
+            >
+              Take this spot
+            </button>
+          </div>
+        </div>
 
-      {/* Lead Vault */}
-      {rank === 1 && bid.leadMagnet && (
-        <div className="mt-4 ml-0 sm:ml-16 w-full sm:w-[calc(100%-4rem)] relative z-30">
-          <LeadVault 
-            identity={bid.identity} 
-            leadMagnet={bid.leadMagnet} 
-          />
-        </div>
-      )}
-    </div>
+        {/* Lead Vault (If #1) */}
+        {rank === 1 && bid.leadMagnet && (
+          <div className="mt-2 w-full relative z-30 pointer-events-auto">
+            <LeadVault 
+              identity={bid.identity} 
+              leadMagnet={bid.leadMagnet} 
+            />
+          </div>
+        )}
+      </div>
+    </article>
   );
 }

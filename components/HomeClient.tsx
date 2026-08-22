@@ -34,8 +34,11 @@ export default function HomeClient({
     <div className="flex flex-col items-center w-full max-w-3xl mx-auto mt-0 sm:mt-2">
       {/* Hero Section */}
       <div className="text-center mb-6 max-w-2xl mx-auto flex flex-col items-center">
-        <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-4">
-          No ads, no algorithms. You pay to stand above everyone else. <br className="hidden sm:block"/> <strong className="text-foreground">Rank is the bid — nothing else.</strong>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight mb-3">
+          The #1 AI Product Directory
+        </h1>
+        <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-5">
+          No algorithms, no fake reviews. <strong className="text-foreground">Rank is determined purely by your bid.</strong><br className="hidden sm:block"/> Put your AI Agent or Product in front of thousands of early adopters.
         </p>
         
         {/* Top Stats Badge */}
@@ -47,17 +50,15 @@ export default function HomeClient({
         >
           <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
             <span className="relative inline-flex size-2 shrink-0">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-500 opacity-75 motion-reduce:animate-none"></span>
-              <span className="relative inline-flex size-2 rounded-full bg-green-500"></span>
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand-500 opacity-75 motion-reduce:animate-none"></span>
+              <span className="relative inline-flex size-2 rounded-full bg-brand-500"></span>
             </span>
-            <span className="font-semibold text-green-500">{liveVisitors !== null ? liveVisitors.toLocaleString() : 42} online</span>
+            <span className="font-semibold text-brand-500">{liveVisitors !== null ? liveVisitors.toLocaleString() : 42} online</span>
           </span>
           <span className="opacity-50">·</span>
           <span>{totalVisitors.toLocaleString()} total visitors</span>
           <span className="opacity-50">·</span>
           <span>${initialBids.reduce((acc, b) => acc + b.amount, 0).toLocaleString()} volume</span>
-          <span className="opacity-50">·</span>
-          <span className="font-semibold text-foreground hover:underline">see stats →</span>
         </a>
       </div>
 
