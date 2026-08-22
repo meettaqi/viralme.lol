@@ -43,14 +43,17 @@ export default function Header({
       </div>
 
       {/* Right Nav */}
-      <nav className="flex items-center justify-end gap-4 sm:gap-6">
-        <Link href="/" className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">
+      <nav className="flex items-center justify-end gap-3 sm:gap-4">
+        <Link 
+          href="/" 
+          className="text-[13px] sm:text-sm font-bold bg-brand-500/10 text-brand-500 hover:bg-brand-500/20 px-4 py-2 rounded-full transition-colors border border-brand-500/20"
+        >
           Leaderboard
         </Link>
-        <Link href="/rules" className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">
+        <Link href="/rules" className="hidden sm:block text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">
           Rules
         </Link>
-        <a href="https://x.com/viralmelol" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">
+        <a href="https://x.com/viralmelol" target="_blank" rel="noopener noreferrer" className="hidden sm:block text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">
           𝕏 Twitter
         </a>
       </nav>
