@@ -30,8 +30,12 @@ export default function Leaderboard({ initialBids, initialTakeover, onClaimClick
       ]);
       const bidsData = await bidsRes.json();
       const takeoverData = await takeoverRes.json();
-      setBids(bidsData);
-      setTakeover(takeoverData.takeover);
+      if (Array.isArray(bidsData)) {
+        setBids(bidsData);
+      }
+      if (takeoverData && takeoverData.takeover) {
+        setTakeover(takeoverData.takeover);
+      }
       setLastRefresh(new Date());
     } catch {
       // silent

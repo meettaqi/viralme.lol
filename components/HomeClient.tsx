@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BidForm from "./BidForm";
 import Leaderboard from "./Leaderboard";
 import FeaturesGuide from "./FeaturesGuide";
@@ -26,11 +26,28 @@ export default function HomeClient({
   topBid,
   takeoverCost,
   takeoverEnabled,
-  liveVisitors,
+  liveVisitors: initialLiveVisitors,
   totalVisitors,
   totalPageviews,
 }: Props) {
   const [bidAmount, setBidAmount] = useState<number | undefined>(undefined);
+  const [liveVisitors, setLiveVisitors] = useState<number | null>(initialLiveVisitors);
+
+  useEffect(() => {
+    const fetchVisitors = async () => {
+      try {
+        const res = await fetch("/api/live-visitors");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.visitors !== null) {
+            setLiveVisitors(data.visitors);
+          }
+        }
+      } catch (err) {}
+    };
+    const interval = setInterval(fetchVisitors, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="flex flex-col items-center w-full max-w-3xl mx-auto mt-0 sm:mt-2">

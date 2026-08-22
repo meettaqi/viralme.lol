@@ -65,7 +65,15 @@ export async function POST(req: NextRequest) {
   // ── TAKEOVER ──────────────────────────────────────────────────────────────
   if (type === "takeover") {
     const takeover = await getTakeover();
-    // Prevent webhook retries from endlessly extending the timer
+    
+    // If a takeover is already active and it's NOT a retry from the same user, ignore it.
+    // This prevents a race condition where two people open checkout simultaneously
+    // and the second payer overwrites the first payer's 3-hour lock.
+    if (takeover.active && takeover.identity !== identity) {
+      console.error("[webhook] Takeover race condition: dropped payment from", identity);
+      return NextResponse.json({ ok: true, note: "Takeover already active" });
+    }
+
     const isRetry = takeover.active && takeover.identity === identity && (new Date().getTime() - new Date(takeover.triggeredAt).getTime() < 120000);
     
     if (!isRetry) {
