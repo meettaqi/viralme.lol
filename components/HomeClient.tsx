@@ -17,6 +17,7 @@ interface Props {
   takeoverEnabled: boolean;
   liveVisitors: number | null;
   totalVisitors: number;
+  totalPageviews: number;
 }
 
 export default function HomeClient({
@@ -27,29 +28,34 @@ export default function HomeClient({
   takeoverEnabled,
   liveVisitors,
   totalVisitors,
+  totalPageviews,
 }: Props) {
   const [bidAmount, setBidAmount] = useState<number | undefined>(undefined);
 
   return (
     <div className="flex flex-col items-center w-full max-w-3xl mx-auto mt-0 sm:mt-2">
-      {/* Hero Section */}
-      <div className="text-center mb-2 max-w-3xl mx-auto flex flex-col items-center">
-        {/* Top Stats Badge */}
+      {/* Live Visitors & Open Startup Badge */}
+      <div className="flex items-center justify-center mb-6">
         <a 
-          href="https://datafa.st/share/6a88058f18a92e2689e02ab1"
-          target="_blank"
+          href="https://datafa.st/share/6a88058f18a92e2689e02ab1" 
+          target="_blank" 
           rel="noopener noreferrer"
-          className="inline-flex justify-center items-center gap-3 rounded-full bg-white shadow-[0_4px_15px_-3px_rgba(0,0,0,0.08)] px-4 py-2 text-[14px] font-semibold text-gray-500 transition-transform hover:-translate-y-0.5 mb-2"
+          className="flex items-center gap-4 sm:gap-6 bg-white/70 backdrop-blur-sm border border-gray-200/60 rounded-full px-5 py-2 text-[14px] text-gray-600 font-semibold hover:border-gray-300 hover:bg-white transition-all shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] cursor-pointer"
         >
-          <span className="inline-flex items-center gap-1.5 whitespace-nowrap bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[13px]">
-            <span className="relative inline-flex size-2 shrink-0">
+          <span className="flex items-center gap-2">
+            <span className="relative flex size-2">
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-500 opacity-75 motion-reduce:animate-none"></span>
               <span className="relative inline-flex size-2 rounded-full bg-green-500"></span>
             </span>
-            <span>{liveVisitors !== null ? liveVisitors.toLocaleString() : 42} online now</span>
+            <span>{liveVisitors !== null ? liveVisitors.toLocaleString() : 0} online</span>
           </span>
-          <span className="text-gray-900">{totalVisitors.toLocaleString()} <span className="font-medium text-gray-500">views so far</span></span>
-          <span className="text-[13px] font-bold">See live stats</span>
+          <span className="text-gray-900">
+            {totalVisitors.toLocaleString()} <span className="font-medium text-gray-500 hidden sm:inline">visitors</span>
+          </span>
+          <span className="text-gray-900 hidden sm:inline">
+            {totalPageviews.toLocaleString()} <span className="font-medium text-gray-500">views</span>
+          </span>
+          <span className="text-[13px] font-bold sm:ml-2 text-brand-500">Live stats →</span>
         </a>
       </div>
 

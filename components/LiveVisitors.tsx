@@ -2,32 +2,16 @@
 
 import { useEffect, useState } from "react";
 
-export default function LiveVisitors({ initialVisitors }: { initialVisitors: number | null }) {
+export default function LiveVisitors({ 
+  initialVisitors, 
+  totalVisitors 
+}: { 
+  initialVisitors: number | null;
+  totalVisitors?: number;
+}) {
   const [visitors, setVisitors] = useState(initialVisitors ?? 0);
-  const [totalVisitors, setTotalVisitors] = useState<number | null>(null);
 
   useEffect(() => {
-    const trackVisit = async () => {
-      try {
-        if (!sessionStorage.getItem("viralme_tracked")) {
-          sessionStorage.setItem("viralme_tracked", "1");
-          const res = await fetch("/api/visit", { method: "POST" });
-          if (res.ok) {
-            const data = await res.json();
-            setTotalVisitors(data.totalVisitors);
-          }
-        } else {
-          const res = await fetch("/api/visit");
-          if (res.ok) {
-             const data = await res.json();
-             setTotalVisitors(data.totalVisitors);
-          }
-        }
-      } catch (err) {}
-    };
-    
-    trackVisit();
-
     const fetchVisitors = async () => {
       try {
         const res = await fetch("/api/live-visitors");
@@ -44,7 +28,7 @@ export default function LiveVisitors({ initialVisitors }: { initialVisitors: num
     return () => clearInterval(interval);
   }, []);
 
-  if (visitors === 0 && totalVisitors === null) return <div className="hidden sm:block"></div>;
+  if (visitors === 0 && !totalVisitors) return <div className="hidden sm:block"></div>;
 
   return (
     <div className="hidden sm:flex items-center gap-3 text-sm font-medium text-muted-foreground/80 bg-muted/20 px-3 py-1.5 rounded-full w-fit">
@@ -58,14 +42,14 @@ export default function LiveVisitors({ initialVisitors }: { initialVisitors: num
         </div>
       )}
       
-      {visitors > 0 && totalVisitors !== null && (
+      {visitors > 0 && totalVisitors && (
         <span className="opacity-40">|</span>
       )}
 
-      {totalVisitors !== null && (
+      {totalVisitors && (
         <div className="flex items-center gap-1.5">
           <span>👀</span>
-          {totalVisitors.toLocaleString()} total
+          {totalVisitors.toLocaleString()} views
         </div>
       )}
     </div>

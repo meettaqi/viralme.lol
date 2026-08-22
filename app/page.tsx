@@ -4,29 +4,45 @@ import { getLeaderboard, getTopBid } from "@/lib/db";
 import { getLeadMagnet } from "@/lib/leads";
 import { getTakeover } from "@/lib/takeover";
 import { getSettings } from "@/lib/settings";
-import { getStats } from "@/lib/stats";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
 async function getLiveVisitors() {
   try {
-    const token = "dft_aac92aa3f417d2434908f066eb6c44645a6628c35d20f723";
-    const url = token.startsWith("df_") 
-      ? "https://datafa.st/api/v1/analytics/realtime"
-      : "https://datafa.st/api/v1/analytics/realtime?websiteId=6a88058f18a92e2689e02ab1";
+    const token = process.env.DATAFAST_TOKEN || "dft_aac92aa3f417d2434908f066eb6c44645a6628c35d20f723";
+    const url = "https://datafa.st/api/v1/analytics/realtime?websiteId=6a88058f18a92e2689e02ab1";
     
     const res = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
+      headers: { Authorization: `Bearer ${token}` },
+      next: { revalidate: 30 },
     });
-    if (!res.ok) return null;
+    if (!res.ok) return 0;
     const data = await res.json();
     return data?.data?.[0]?.visitors || 0;
   } catch {
-    return null;
+    return 0;
+  }
+}
+
+async function getAnalyticsOverview() {
+  try {
+    const token = process.env.DATAFAST_TOKEN || "dft_aac92aa3f417d2434908f066eb6c44645a6628c35d20f723";
+    const url = "https://datafa.st/api/v1/analytics/overview?websiteId=6a88058f18a92e2689e02ab1&startAt=2024-01-01T00:00:00.000Z&endAt=2030-01-01T00:00:00.000Z";
+    
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return { visitors: 0, pageviews: 0 };
+    const data = await res.json();
+    const stats = data?.data?.[0] || {};
+    return {
+      visitors: stats.visitors || 0,
+      pageviews: stats.pageviews || 0,
+    };
+  } catch {
+    return { visitors: 0, pageviews: 0 };
   }
 }
 
@@ -35,14 +51,18 @@ export default async function Home() {
   const topBid = await getTopBid();
   const takeover = await getTakeover();
   const settings = await getSettings();
-  const stats = await getStats();
-  const liveVisitors = await getLiveVisitors();
+  
+  const [liveVisitors, overviewStats] = await Promise.all([
+    getLiveVisitors(),
+    getAnalyticsOverview(),
+  ]);
+  
   const takeoverCost = topBid > 0 ? topBid * settings.takeoverMultiplier : (settings.takeoverMultiplier * 10 || 50);
 
   return (
     <div className="relative min-h-screen selection:bg-brand-500/30">
       <main className="mx-auto w-full max-w-5xl px-4 pt-6 pb-12 min-h-[calc(100vh-100px)]">
-        <Header liveVisitors={liveVisitors} />
+        <Header liveVisitors={liveVisitors} totalVisitors={overviewStats.visitors} />
         <HomeClient
           initialBids={bids}
           initialTakeover={takeover}
@@ -50,7 +70,8 @@ export default async function Home() {
           takeoverCost={takeoverCost}
           takeoverEnabled={settings.takeoverEnabled}
           liveVisitors={liveVisitors}
-          totalVisitors={stats.totalVisitors}
+          totalVisitors={overviewStats.visitors}
+          totalPageviews={overviewStats.pageviews}
         />
       </main>
 
