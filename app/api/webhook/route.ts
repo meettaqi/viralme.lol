@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
   const order = event.data;
   const meta = (order.metadata ?? {}) as Record<string, string>;
-  const { type = "bid", id, identity, amount, referredBy, charge, vaultOffer, vaultSecret } = meta;
+  const { type = "bid", id, identity, amount, charge, vaultOffer, vaultSecret, title = "", description = "" } = meta;
 
   if (vaultOffer && vaultSecret) {
     saveLeadMagnet(identity, vaultOffer, vaultSecret);
@@ -64,9 +64,11 @@ export async function POST(req: NextRequest) {
 
   // ── TAKEOVER ──────────────────────────────────────────────────────────────
   if (type === "takeover") {
-    // Don't double-activate if webhook fires twice
     const takeover = await getTakeover();
-    if (!takeover.active) {
+    // Prevent webhook retries from endlessly extending the timer
+    const isRetry = takeover.active && takeover.identity === identity && (new Date().getTime() - new Date(takeover.triggeredAt).getTime() < 120000);
+    
+    if (!isRetry) {
       await activateTakeover(identity, identity, parsedAmount);
       // Scrape title in background
       fetchOG(identity)
@@ -83,15 +85,20 @@ export async function POST(req: NextRequest) {
     identity,
     amount: parsedAmount,
     baseAmount: parsedAmount,
-    title: "",
-    description: "",
+    title,
+    description,
     createdAt: new Date().toISOString(),
-    paid: false,
+    paid: true,
     stripeSessionId: id,
   });
-  await confirmPayment(id);
+
   fetchOG(identity)
-    .then(async ({ title, description }) => await updateOGData(id, title, description))
+    .then(async ({ title: fetchedTitle, description: fetchedDesc }) => {
+      // Only update OG data if they didn't manually provide it
+      if (!title || !description) {
+         await updateOGData(id, fetchedTitle || title, fetchedDesc || description);
+      }
+    })
     .catch(() => {});
 
   return NextResponse.json({ ok: true });

@@ -49,7 +49,7 @@ async function demoHandleBid(identity: string, amount: number, siteUrl: string, 
     title: title || "",
     description: description || "",
     createdAt: new Date().toISOString(),
-    paid: false,
+    paid: true,
     stripeSessionId: sessionId,
   });
   await confirmPayment(sessionId);
@@ -163,23 +163,15 @@ export async function POST(req: NextRequest) {
         identity, 
         amount: String(amount), 
         charge: String(charge), 
-        ...(referredBy && { referredBy }),
+        ...(title && { title: title.slice(0, 100) }),
+        ...(description && { description: description.slice(0, 100) }),
         ...(vaultOffer && { vaultOffer: vaultOffer.slice(0, 100) }),
         ...(vaultSecret && { vaultSecret: vaultSecret.slice(0, 100) })
       },
       successUrl: `${siteUrl}/success?checkout_id={CHECKOUT_ID}`,
       customerIpAddress: clientIp,
     });
-    await upsertPendingBid({
-      identity,
-      amount,
-      baseAmount: amount,
-      title: title || "",
-      description: description || "",
-      createdAt: new Date().toISOString(),
-      paid: false,
-      stripeSessionId: id,
-    });
+    
     return NextResponse.json({ url: checkout.url, charge });
   } catch (err: any) {
     console.error("[POST /api/checkout]", err);

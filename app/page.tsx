@@ -81,12 +81,18 @@ export default async function Home() {
             viralme<span className="text-brand-500">.</span>lol
           </div>
           
-          <div className="flex items-center gap-6 text-sm text-muted-foreground font-medium">
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-6 gap-y-2 text-sm text-muted-foreground font-medium">
             <Link href="/rules" className="hover:text-brand-400 transition-colors">
-              Rules & Guidelines
+              Rules
+            </Link>
+            <Link href="/privacy" className="hover:text-brand-400 transition-colors">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-brand-400 transition-colors">
+              Terms
             </Link>
             <a href="https://x.com/viralmelol" target="_blank" rel="noopener noreferrer" className="hover:text-brand-400 transition-colors">
-              Twitter / 𝕏
+              𝕏 Twitter
             </a>
           </div>
           

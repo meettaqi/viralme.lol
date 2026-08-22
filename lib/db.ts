@@ -147,13 +147,16 @@ export async function upsertPendingBid(
 
   if (existing) {
     if (bid.amount >= Number(existing.amount)) {
+      const newBaseAmount = bid.baseAmount ?? bid.amount;
+      const newBoostTotal = bid.boostTotal ?? existing.boost_total;
+
       const updateData = {
         title: bid.title || existing.title,
         description: bid.description || existing.description,
-        amount: bid.amount,
-        base_amount: bid.baseAmount ?? bid.amount,
-        paid: bid.paid ?? existing.paid,
-        boost_total: bid.boostTotal ?? existing.boost_total,
+        amount: newBaseAmount + newBoostTotal,
+        base_amount: newBaseAmount,
+        paid: bid.paid !== undefined ? bid.paid : existing.paid,
+        boost_total: newBoostTotal,
         stripe_session_id: bid.stripeSessionId,
         updated_at: now,
       };
@@ -170,14 +173,17 @@ export async function upsertPendingBid(
     return mapBidFromDB(existing);
   }
 
+  const newBaseAmount = bid.baseAmount ?? bid.amount;
+  const newBoostTotal = bid.boostTotal ?? 0;
+
   const insertData = {
     id: crypto.randomUUID(),
     identity: bid.identity,
     title: bid.title,
     description: bid.description,
-    amount: bid.amount,
-    base_amount: bid.baseAmount ?? bid.amount,
-    boost_total: bid.boostTotal ?? 0,
+    amount: newBaseAmount + newBoostTotal,
+    base_amount: newBaseAmount,
+    boost_total: newBoostTotal,
     clicks: bid.clicks ?? 0,
     hall_of_fame: bid.hallOfFame ?? false,
     paid: bid.paid ?? false,
