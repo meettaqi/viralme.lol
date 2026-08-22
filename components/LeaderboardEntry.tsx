@@ -4,7 +4,6 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { Bid } from "@/lib/db";
 import BoostButton from "./BoostButton";
-import ReferralButton from "./ReferralButton";
 import Image from "next/image";
 import LeadVault from "./LeadVault";
 
@@ -169,7 +168,6 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
             
             <div className="flex items-center gap-2 mt-1 sm:mt-0">
               <BoostButton identity={bid.identity} currentAmount={bid.amount} />
-              <ReferralButton identity={bid.identity} />
               <button 
                 className="shrink-0 tracking-[-0.5px] bg-[#F97316] text-white font-bold px-4 py-2 sm:px-5 sm:py-2.5 text-[14px] sm:text-[15px] rounded-full shadow-[0_4px_0_#C2410C] hover:bg-[#EA580C] active:translate-y-[4px] active:shadow-none transition-all"
                 onClick={(e) => {
@@ -280,7 +278,6 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
           
           <div className="flex items-center gap-2">
             <BoostButton identity={bid.identity} currentAmount={bid.amount} />
-            <ReferralButton identity={bid.identity} />
             <button 
               className="shrink-0 tracking-[-0.5px] bg-orange-100 text-orange-600 font-semibold px-3 py-[5px] text-[13px] sm:px-[14px] sm:py-[6px] sm:text-[15px] rounded-full hover:bg-orange-200 transition-colors shadow-none"
               onClick={(e) => {

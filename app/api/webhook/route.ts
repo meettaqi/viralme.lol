@@ -53,13 +53,8 @@ export async function POST(req: NextRequest) {
   const parsedAmount = parseInt(amount, 10);
   const actualCharge = type === "bid" ? parseInt(charge || amount, 10) : parsedAmount;
 
-  if (referredBy && referredBy !== identity) {
-    try {
-      await applyBoost(referredBy, Math.min(10, actualCharge));
-    } catch(err) {
-      console.error("[webhook] error applying referral", err);
-    }
-  }
+  // Referral boost logic removed to prevent referrers from stealing the #1 spot
+  // from the person they referred.
 
   // ── BOOST ─────────────────────────────────────────────────────────────────
   if (type === "boost") {
