@@ -18,21 +18,31 @@ const geistMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "viralme.lol — Pay to rank. Go viral.",
+  title: "viralme.lol — The #1 AI Product Directory",
   description:
-    "The leaderboard where your bid decides your position. Pay to rank your product, profile, or GitHub above the competition. Will you take #1 when this goes viral?",
+    "No algorithms, no fake reviews. Rank is determined purely by your bid. Put your AI Agent or Product in front of thousands of early adopters.",
+  metadataBase: new URL("https://viralme.lol"),
   openGraph: {
-    title: "viralme.lol — Pay to rank. Go viral.",
+    title: "viralme.lol — The #1 AI Product Directory",
     description:
-      "No ads, no algorithms. Just bids. Claim your spot, claim #1, and go viral.",
+      "No algorithms, no fake reviews. Rank is determined purely by your bid. Put your AI Agent or Product in front of thousands of early adopters.",
     url: "https://viralme.lol",
     siteName: "viralme.lol",
+    images: [
+      {
+        url: "/opengraph-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "viralme.lol Preview",
+      }
+    ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "viralme.lol — Pay to rank. Go viral.",
-    description: "The leaderboard where money = rank. Will you take #1?",
+    title: "viralme.lol — The #1 AI Product Directory",
+    description: "No algorithms, no fake reviews. Rank is determined purely by your bid. Put your AI Agent or Product in front of thousands of early adopters.",
+    images: ["/twitter-image.jpg"],
   },
 };
 

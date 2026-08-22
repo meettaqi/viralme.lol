@@ -38,6 +38,9 @@ export default function Header({ liveVisitors }: { liveVisitors?: number | null 
 
       {/* Right Nav */}
       <nav className="flex items-center justify-end gap-4 sm:gap-6">
+        <Link href="/" className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">
+          Leaderboard
+        </Link>
         <Link href="/rules" className="text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">
           Rules
         </Link>
