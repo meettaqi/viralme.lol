@@ -84,6 +84,8 @@ export async function POST(req: NextRequest) {
     if (!identity) {
       return NextResponse.json({ error: "identity required" }, { status: 400 });
     }
+    
+    const parsedAmount = parseInt(String(amount ?? "1"), 10);
 
     const host = req.headers.get("host") || "localhost:3000";
     const protocol = host.includes("localhost") ? "http" : "https";
@@ -93,11 +95,11 @@ export async function POST(req: NextRequest) {
     if (DEMO_MODE) {
       if (vaultOffer && vaultSecret) saveLeadMagnet(identity, vaultOffer, vaultSecret);
       if (type === "boost") {
-        const boostAmt = Math.min(5, Math.max(1, amount ?? 1));
+        const boostAmt = Math.min(5, Math.max(1, isNaN(parsedAmount) ? 1 : parsedAmount));
         return await demoHandleBoost(identity, boostAmt, siteUrl);
       }
       if (type === "takeover") return await demoHandleTakeover(identity, siteUrl);
-      return await demoHandleBid(identity, amount ?? 1, siteUrl, title, description);
+      return await demoHandleBid(identity, isNaN(parsedAmount) ? 1 : parsedAmount, siteUrl, title, description);
     }
 
     // ── LIVE MODE ────────────────────────────────────────────────────────────
@@ -112,7 +114,7 @@ export async function POST(req: NextRequest) {
       undefined;
 
     if (type === "boost") {
-      const boostAmt = Math.min(5, Math.max(1, amount ?? 1));
+      const boostAmt = Math.min(5, Math.max(1, isNaN(parsedAmount) ? 1 : parsedAmount));
       const id = generateId();
       const checkout = await polar.checkouts.create({
         products: [productId],
@@ -149,10 +151,10 @@ export async function POST(req: NextRequest) {
     }
 
     // type === "bid"
-    if (!amount || amount < 1) {
+    if (isNaN(parsedAmount) || parsedAmount < 1) {
       return NextResponse.json({ error: "amount ≥ 1 required" }, { status: 400 });
     }
-    const charge = await chargeForBid(identity, amount);
+    const charge = await chargeForBid(identity, parsedAmount);
     const id = generateId();
     const checkout = await polar.checkouts.create({
       products: [productId],
@@ -161,7 +163,7 @@ export async function POST(req: NextRequest) {
         type: "bid", 
         id, 
         identity, 
-        amount: String(amount), 
+        amount: String(parsedAmount), 
         charge: String(charge), 
         ...(title && { title: title.slice(0, 100) }),
         ...(description && { description: description.slice(0, 100) }),
