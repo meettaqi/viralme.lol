@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useId } from "react";
 import { cn } from "@/lib/utils";
+import type { Bid } from "@/lib/db";
 
 interface Props {
+  bids: Bid[];
   defaultAmount?: number;
   topBid: number;
   takeoverCost: number;
@@ -15,6 +17,7 @@ const MIN_BID = 2;
 const STEP = 1;
 
 export default function BidForm({
+  bids,
   defaultAmount,
   topBid = 0,
   takeoverCost = 50,
@@ -31,8 +34,8 @@ export default function BidForm({
   const [isVerifiedAi, setIsVerifiedAi] = useState(false);
   const formId = useId();
 
-  // Very naive projection
-  const projectedRank = amount > topBid ? 1 : amount > topBid * 0.5 ? 2 : 3;
+  // Accurate projection: count how many bids are >= the current amount
+  const projectedRank = bids.filter(b => b.amount >= amount).length + 1;
   // Stub for existing bid difference logic
   const existingBid = 0;
   const charge = Math.max(MIN_BID, amount - existingBid);
@@ -113,6 +116,14 @@ export default function BidForm({
 
   return (
     <div className="flex flex-col items-center text-center w-full max-w-2xl mx-auto">
+      <h1 className="text-[52px] sm:text-[72px] leading-[1.05] font-extrabold text-[#111827] tracking-tight mb-4">
+        Claim <span className="text-brand-500">#{projectedRank}</span> for your AI product
+      </h1>
+      
+      <p className="text-[18px] sm:text-[20px] font-medium text-gray-600 leading-snug max-w-xl mx-auto mb-6">
+        <strong className="text-green-600 font-bold">Bids start at $2.</strong> Bid under the #1 price and you still land on the board - exactly where your amount ranks.
+      </p>
+
       {/* Huge Pricing Header */}
       <div className="flex items-center justify-center gap-4 sm:gap-5 mb-8 mt-2">
         <button 
