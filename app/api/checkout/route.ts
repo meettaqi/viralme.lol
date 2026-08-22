@@ -27,6 +27,8 @@ interface RequestBody {
   referredBy?: string;
   vaultOffer?: string;
   vaultSecret?: string;
+  title?: string;
+  description?: string;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -37,15 +39,15 @@ async function chargeForBid(identity: string, desiredAmount: number): Promise<nu
 }
 
 // ── Demo mode handlers ────────────────────────────────────────────────────────
-async function demoHandleBid(identity: string, amount: number, siteUrl: string) {
+async function demoHandleBid(identity: string, amount: number, siteUrl: string, title?: string, description?: string) {
   const id = generateId();
   const sessionId = "polar_demo_" + id;
   await upsertPendingBid({
     identity,
     amount,
     baseAmount: amount,
-    title: "",
-    description: "",
+    title: title || "",
+    description: description || "",
     createdAt: new Date().toISOString(),
     paid: false,
     stripeSessionId: sessionId,
@@ -77,7 +79,7 @@ async function demoHandleTakeover(identity: string, siteUrl: string) {
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as RequestBody;
-    const { type = "bid", identity, amount, referredBy, vaultOffer, vaultSecret } = body;
+    const { type = "bid", identity, amount, referredBy, vaultOffer, vaultSecret, title, description } = body;
 
     if (!identity) {
       return NextResponse.json({ error: "identity required" }, { status: 400 });
@@ -95,7 +97,7 @@ export async function POST(req: NextRequest) {
         return await demoHandleBoost(identity, boostAmt, siteUrl);
       }
       if (type === "takeover") return await demoHandleTakeover(identity, siteUrl);
-      return await demoHandleBid(identity, amount ?? 1, siteUrl);
+      return await demoHandleBid(identity, amount ?? 1, siteUrl, title, description);
     }
 
     // ── LIVE MODE ────────────────────────────────────────────────────────────
@@ -172,8 +174,8 @@ export async function POST(req: NextRequest) {
       identity,
       amount,
       baseAmount: amount,
-      title: "",
-      description: "",
+      title: title || "",
+      description: description || "",
       createdAt: new Date().toISOString(),
       paid: false,
       stripeSessionId: id,

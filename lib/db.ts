@@ -222,8 +222,8 @@ export async function updateOGData(sessionId: string, title: string, description
     .single();
 
   if (data) {
-    const newTitle = title || data.title;
-    const newDescription = description || data.description;
+    const newTitle = data.title || title;
+    const newDescription = data.description || description;
     await supabase
       .from('bids')
       .update({ title: newTitle, description: newDescription })

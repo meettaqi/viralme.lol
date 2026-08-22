@@ -22,6 +22,8 @@ export default function BidForm({
   takeoverEnabled = true,
 }: Props) {
   const [identity, setIdentity] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [amount, setAmount] = useState(defaultAmount || Math.max(MIN_BID, topBid + 1));
   const [loading, setLoading] = useState(false);
   const [takingOver, setTakingOver] = useState(false);
@@ -64,6 +66,8 @@ export default function BidForm({
         body: JSON.stringify({ 
           type: "bid", 
           identity: identity.trim(), 
+          title: title.trim() || undefined,
+          description: description.trim() || undefined,
           amount,
           referredBy: localStorage.getItem("viralme_ref") || undefined 
         }),
@@ -92,6 +96,8 @@ export default function BidForm({
         body: JSON.stringify({ 
           type: "takeover", 
           identity: identity.trim(),
+          title: title.trim() || undefined,
+          description: description.trim() || undefined,
           referredBy: localStorage.getItem("viralme_ref") || undefined
         }),
       });
@@ -160,8 +166,28 @@ export default function BidForm({
         </button>
       </form>
       
+      {/* Optional Metadata Inputs */}
+      {identity.trim().length > 3 && (
+        <div className="flex flex-col gap-3 w-full mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Short Title (optional, we'll fetch it if left blank)"
+            className="w-full bg-white border border-border/60 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500/50 placeholder:text-muted-foreground"
+          />
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Short Description (optional, we'll fetch it if left blank)"
+            className="w-full bg-white border border-border/60 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500/50 placeholder:text-muted-foreground"
+          />
+        </div>
+      )}
+
       {/* Strict AI Checkbox Deterrent */}
-      <div className="mt-4 flex items-start gap-2 max-w-xl mx-auto text-left">
+      <div className="mt-5 flex items-start gap-2 max-w-xl mx-auto text-left">
         <input 
           type="checkbox" 
           id={`${formId}-verify`}
