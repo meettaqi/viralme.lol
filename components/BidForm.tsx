@@ -140,7 +140,7 @@ export default function BidForm({
         </div>
       </h1>
       
-      <p className="text-[20px] sm:text-[24px] font-semibold text-gray-800 mb-6">
+      <p className="text-[20px] sm:text-[24px] font-bold text-gray-900 mb-6">
         for your AI product
       </p>
 
@@ -202,19 +202,21 @@ export default function BidForm({
       </p>
 
       {/* Strict AI Checkbox Deterrent */}
-      <div className="flex items-start gap-3 max-w-[500px] mx-auto text-left mb-6 bg-white p-4 rounded-xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)]">
-        <input 
-          type="checkbox" 
-          id={`${formId}-verify`}
-          checked={isVerifiedAi}
-          onChange={(e) => setIsVerifiedAi(e.target.checked)}
-          className="mt-1 shrink-0 accent-brand-500 w-4 h-4 rounded border-gray-300"
-        />
-        <label htmlFor={`${formId}-verify`} className="text-[13px] text-gray-600 cursor-pointer">
-          <strong className="text-gray-900 block mb-1 text-[14px]">I confirm this is an AI Agent or Product.</strong>
-          Non-AI submissions will be permanently deleted without a refund.
-        </label>
-      </div>
+      {identity.trim().length > 0 && (
+        <div className="flex items-start gap-3 max-w-[500px] w-full mx-auto text-left mb-6 bg-white p-4 rounded-xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)] animate-in fade-in slide-in-from-top-2 duration-300">
+          <input 
+            type="checkbox" 
+            id={`${formId}-verify`}
+            checked={isVerifiedAi}
+            onChange={(e) => setIsVerifiedAi(e.target.checked)}
+            className="mt-1 shrink-0 accent-brand-500 w-4 h-4 rounded border-gray-300"
+          />
+          <label htmlFor={`${formId}-verify`} className="text-[13px] text-gray-600 cursor-pointer">
+            <strong className="text-gray-900 block mb-1 text-[14px]">I confirm this is an AI Agent or Product.</strong>
+            Non-AI submissions will be permanently deleted without a refund.
+          </label>
+        </div>
+      )}
 
       {error && <p className="text-[13px] font-medium text-red-600 bg-red-50 py-3 px-4 rounded-xl border border-red-100 max-w-[500px] w-full">{error}</p>}
 
