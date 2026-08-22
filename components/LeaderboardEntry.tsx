@@ -76,6 +76,121 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
     }).catch(() => {});
   }
 
+  if (isTop3) {
+    return (
+      <article
+        className={cn(
+          "relative flex w-full cursor-pointer items-start gap-4 p-5 sm:p-6 transition-all duration-200",
+          "bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 hover:-translate-y-1 hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)]",
+          isTakeover && "ring-2 ring-yellow-400 bg-yellow-50/10"
+        )}
+      >
+        <a 
+          href={href} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          onClick={handleTrack}
+          className="absolute inset-0 z-10"
+          aria-label={`Visit ${bid.title || bid.identity}`}
+        />
+
+        {/* Left Column */}
+        <div className="flex shrink-0 flex-col items-center gap-1.5 z-20">
+          <span className="text-[18px] sm:text-[22px] font-extrabold text-[#1F549E]">
+            #{rank}
+          </span>
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[14px] border border-black/5 bg-gray-50 overflow-hidden flex items-center justify-center">
+            {getFaviconUrl(bid.identity) ? (
+              <Image 
+                src={getFaviconUrl(bid.identity)!} 
+                alt={bid.identity}
+                width={64}
+                height={64}
+                className="w-full h-full object-cover"
+                priority={true}
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                  if (e.currentTarget.parentElement) {
+                    e.currentTarget.parentElement.innerText = avatarLetter(bid.identity);
+                  }
+                }}
+                unoptimized
+              />
+            ) : (
+              <span className="font-bold text-2xl text-gray-400">{avatarLetter(bid.identity)}</span>
+            )}
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="flex min-w-0 flex-1 flex-col gap-2 z-20 pointer-events-none">
+          <div className="flex items-baseline justify-between gap-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <a 
+                href={href} 
+                target="_blank" 
+                className="truncate text-[20px] leading-[1.2] font-bold tracking-[-0.5px] text-gray-900 hover:underline sm:text-[24px] pointer-events-auto"
+              >
+                {bid.title || bid.identity.replace(/^https?:\/\//, '')}
+              </a>
+              <span className="flex-shrink-0 text-blue-500 mt-1" title="Verified AI Product">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+              </span>
+            </div>
+            <span className="shrink-0 text-[24px] sm:text-[28px] font-extrabold tabular-nums text-blue-500">
+              {formatUSD(bid.amount)}
+            </span>
+          </div>
+          
+          {bid.description ? (
+            <p className="line-clamp-2 text-[14px] leading-[1.4] font-medium tracking-[-0.2px] text-gray-500 sm:text-[15px]">
+              {bid.description}
+            </p>
+          ) : (
+            <p className="truncate text-[14px] leading-[1.4] font-medium tracking-[-0.2px] text-gray-500 sm:text-[15px]">
+              {formatUrl(bid.identity)}
+            </p>
+          )}
+
+          <div className="flex items-center flex-wrap gap-3 mt-2 pointer-events-auto relative z-30">
+            <span className="shrink-0 px-2.5 py-1 text-[13px] font-bold bg-blue-50 text-blue-600 rounded-md flex items-center gap-1.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+              {bid.clicks || 0} clicks
+            </span>
+            <time className="min-w-0 flex-1 truncate text-[13px] tracking-[-0.26px] text-gray-400 font-medium">
+              {timeAgo(bid.updatedAt || bid.createdAt)}
+            </time>
+            
+            <div className="flex items-center gap-2 mt-1 sm:mt-0">
+              <BoostButton identity={bid.identity} currentAmount={bid.amount} />
+              <ReferralButton identity={bid.identity} />
+              <button 
+                className="shrink-0 tracking-[-0.5px] bg-[#F97316] text-white font-bold px-4 py-2 sm:px-5 sm:py-2.5 text-[14px] sm:text-[15px] rounded-full shadow-[0_4px_0_#C2410C] hover:bg-[#EA580C] active:translate-y-[4px] active:shadow-none transition-all"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onClaimClick?.(claimAmount);
+                }}
+              >
+                Take this spot
+              </button>
+            </div>
+          </div>
+
+          {rank === 1 && bid.leadMagnet && (
+            <div className="mt-4 w-full relative z-30 pointer-events-auto">
+              <LeadVault 
+                identity={bid.identity} 
+                leadMagnet={bid.leadMagnet} 
+              />
+            </div>
+          )}
+        </div>
+      </article>
+    );
+  }
+
+  // The rest (Rank > 3)
   return (
     <article
       className={cn(
@@ -84,7 +199,6 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
         isTakeover && "bg-yellow-50/50"
       )}
     >
-      {/* Invisible link overlay */}
       <a 
         href={href} 
         target="_blank" 
@@ -94,7 +208,6 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
         aria-label={`Visit ${bid.title || bid.identity}`}
       />
 
-      {/* Rank & Icon (Left Column) */}
       <div className="flex shrink-0 flex-col items-center gap-1 z-20">
         <span className="text-[13px] font-semibold text-gray-400 sm:text-[14px]">
           #{rank}
@@ -107,7 +220,6 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
               width={44}
               height={44}
               className="w-full h-full object-cover"
-              priority={rank <= 3}
               onError={(e) => {
                 e.currentTarget.style.display = "none";
                 if (e.currentTarget.parentElement) {
@@ -122,10 +234,7 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
         </div>
       </div>
 
-      {/* Content (Right Column) */}
       <div className="flex min-w-0 flex-1 flex-col gap-1.5 z-20 pointer-events-none">
-        
-        {/* Title & Price Row */}
         <div className="flex items-baseline justify-between gap-3">
           <div className="flex items-center gap-1.5 min-w-0">
             <a 
@@ -135,19 +244,15 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
             >
               {bid.title || bid.identity.replace(/^https?:\/\//, '')}
             </a>
-            <span 
-              className="flex-shrink-0 flex items-center text-blue-500 mt-0.5"
-              title="Verified AI Product"
-            >
+            <span className="flex-shrink-0 flex items-center text-blue-500 mt-0.5" title="Verified AI Product">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </span>
           </div>
-          <span className="shrink-0 text-[18px] sm:text-[22px] font-semibold tabular-nums text-gray-900">
+          <span className="shrink-0 text-[18px] sm:text-[22px] font-semibold tabular-nums text-blue-500">
             {formatUSD(bid.amount)}
           </span>
         </div>
         
-        {/* Description Row */}
         {bid.description ? (
           <p className="truncate text-[13px] leading-[1.4] font-medium tracking-[-0.2px] text-gray-500 sm:text-[14px]">
             {bid.description}
@@ -158,10 +263,9 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
           </p>
         )}
         
-        {/* Bottom Meta & Actions Row */}
         <div className="flex items-center flex-wrap gap-2.5 mt-1 pointer-events-auto relative z-30">
-          <span className="shrink-0 px-2 py-0.5 text-[12px] sm:text-[13px] font-medium bg-gray-100 text-gray-500 rounded flex items-center gap-1">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          <span className="shrink-0 px-2 py-0.5 text-[12px] sm:text-[13px] font-semibold bg-blue-50 text-blue-600 rounded flex items-center gap-1">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
             {bid.clicks || 0} clicks
           </span>
           <time className="min-w-0 flex-1 truncate text-[12px] sm:text-[13px] tracking-[-0.26px] text-gray-400 font-medium">
@@ -183,16 +287,6 @@ export default function LeaderboardEntry({ bid, rank, isTakeover, onClaimClick }
             </button>
           </div>
         </div>
-
-        {/* Lead Vault (If #1) */}
-        {rank === 1 && bid.leadMagnet && (
-          <div className="mt-3 w-full relative z-30 pointer-events-auto">
-            <LeadVault 
-              identity={bid.identity} 
-              leadMagnet={bid.leadMagnet} 
-            />
-          </div>
-        )}
       </div>
     </article>
   );

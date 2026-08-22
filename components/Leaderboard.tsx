@@ -103,19 +103,43 @@ export default function Leaderboard({ initialBids, initialTakeover, onClaimClick
           <p className="text-muted-foreground text-sm mt-1">Be the first to claim #1.</p>
         </div>
       ) : (
-        <div className="flex flex-col bg-white border border-gray-200 rounded-[20px] shadow-sm overflow-hidden">
-          {sorted.map((bid, i) => {
-            const rank = i + 1;
-            return (
+        <div className="flex flex-col">
+          {/* Top 3 separated floating cards */}
+          <div className="flex flex-col gap-4">
+            {sorted.slice(0, 3).map((bid, i) => (
               <LeaderboardEntry
                 key={bid.id}
                 bid={bid}
-                rank={rank}
+                rank={i + 1}
                 isTakeover={takeover.active && bid.identity === takeover.identity}
                 onClaimClick={onClaimClick}
               />
-            );
-          })}
+            ))}
+          </div>
+          
+          {/* Top 10 Divider */}
+          {sorted.length > 3 && (
+            <div className="flex w-full items-center gap-[10px] my-8">
+              <span className="h-px flex-1 bg-[#9eabb5]/40"></span>
+              <span className="bg-[#10B981] text-white px-4 py-1.5 rounded-full font-bold text-sm tracking-wide">Top 10</span>
+              <span className="h-px flex-1 bg-[#9eabb5]/40"></span>
+            </div>
+          )}
+
+          {/* The rest as a contiguous block */}
+          {sorted.length > 3 && (
+            <div className="flex flex-col bg-white border border-gray-200 rounded-[20px] shadow-sm overflow-hidden">
+              {sorted.slice(3).map((bid, i) => (
+                <LeaderboardEntry
+                  key={bid.id}
+                  bid={bid}
+                  rank={i + 4}
+                  isTakeover={takeover.active && bid.identity === takeover.identity}
+                  onClaimClick={onClaimClick}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 

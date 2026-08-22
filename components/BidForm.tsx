@@ -114,37 +114,33 @@ export default function BidForm({
   return (
     <div className="flex flex-col items-center text-center w-full max-w-2xl mx-auto">
       {/* Huge Pricing Header */}
-      <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-foreground flex items-center justify-center gap-3 mb-4">
-        Claim #{projectedRank} for 
+      <div className="flex items-center justify-center gap-4 sm:gap-5 mb-8 mt-2">
         <button 
           onClick={() => adjust(-STEP)}
-          className="w-10 h-10 rounded-full bg-brand-500/10 text-brand-500 flex items-center justify-center hover:bg-brand-500/20 transition-colors text-2xl leading-none font-medium"
-        >-</button>
-        <span className="text-brand-500 tabular-nums inline-flex overflow-hidden">
-          $
-          <span key={amount} className="animate-bloop inline-block">
-            {amount}
+          className="w-[52px] h-[52px] sm:w-[60px] sm:h-[60px] rounded-[16px] bg-[#D6EAF8] text-blue-500 flex items-center justify-center hover:bg-[#C2E0F4] transition-colors text-[32px] sm:text-[40px] leading-none font-medium pb-1"
+        >
+          -
+        </button>
+        <div className="text-blue-500 tabular-nums flex items-center">
+          <span className="text-[64px] sm:text-[80px] font-extrabold tracking-tight leading-none">
+            ${amount}
           </span>
-        </span>
+        </div>
         <button 
           onClick={() => adjust(STEP)}
-          className="w-10 h-10 rounded-full bg-brand-500/10 text-brand-500 flex items-center justify-center hover:bg-brand-500/20 transition-colors text-2xl leading-none font-medium"
-        >+</button>
-      </h2>
-
-      {/* Subtext */}
-      <p className="text-sm text-muted-foreground text-balance mb-8">
-        Your amount decides the rank. Paying less than the #1 price still puts you on the board at whatever place that bid can take.
-      </p>
+          className="w-[52px] h-[52px] sm:w-[60px] sm:h-[60px] rounded-[16px] bg-[#D6EAF8] text-blue-500 flex items-center justify-center hover:bg-[#C2E0F4] transition-colors text-[32px] sm:text-[40px] leading-none font-medium pb-1"
+        >
+          +
+        </button>
+      </div>
 
       {/* Input Row Form */}
       <form
         onSubmit={handleBid}
-        className="relative flex items-center w-full rounded-full border border-border/60 bg-card p-1.5 pl-4 shadow-sm hover:border-brand-500/30 transition-colors focus-within:border-brand-500/50 focus-within:ring-2 focus-within:ring-brand-500/20"
+        className="relative flex items-center w-full max-w-[500px] rounded-full bg-[#E5E7EB] p-2 pl-5 transition-colors focus-within:ring-2 focus-within:ring-blue-500/20 shadow-inner"
       >
-        {/* Globe Icon */}
-        <svg className="w-5 h-5 text-muted-foreground mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+        <svg className="w-[18px] h-[18px] text-gray-500 mr-2.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
         </svg>
         
         <input
@@ -152,60 +148,61 @@ export default function BidForm({
           type="text"
           value={identity}
           onChange={(e) => setIdentity(e.target.value)}
-          placeholder="Your AI product URL or @handle"
-          className="flex-1 bg-transparent border-none text-foreground text-sm sm:text-base focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
+          placeholder="App Store link or app name..."
+          className="flex-1 bg-transparent border-none text-gray-800 text-[15px] sm:text-[16px] font-medium focus:outline-none focus:ring-0 placeholder:text-gray-500"
           required
         />
         
         <button
           type="submit"
           disabled={loading || !isVerifiedAi}
-          className="ml-2 rounded-full bg-brand-500 hover:bg-brand-600 px-6 py-3 text-sm font-bold text-white transition-all disabled:opacity-50 whitespace-nowrap shadow-sm"
+          className="ml-2 rounded-full bg-[#60A5FA] hover:bg-blue-500 px-6 py-3 text-[15px] font-bold text-white transition-all disabled:opacity-50 whitespace-nowrap shadow-[0_4px_10px_-2px_rgba(96,165,250,0.4)]"
         >
-          {loading ? "Loading..." : "Claim"}
+          {loading ? "Loading..." : "Claim #1"}
         </button>
       </form>
       
       {/* Optional Metadata Inputs */}
       {identity.trim().length > 3 && (
-        <div className="flex flex-col gap-3 w-full mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="flex flex-col gap-3 w-full max-w-[500px] mt-3 animate-in fade-in slide-in-from-top-2 duration-300">
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Short Title (optional, we'll fetch it if left blank)"
-            className="w-full bg-white border border-border/60 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500/50 placeholder:text-muted-foreground"
+            className="w-full bg-[#E5E7EB] border-none rounded-2xl px-5 py-3.5 text-[15px] font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 placeholder:text-gray-500 text-gray-800 shadow-inner"
           />
           <input
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Short Description (optional, we'll fetch it if left blank)"
-            className="w-full bg-white border border-border/60 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500/50 placeholder:text-muted-foreground"
+            className="w-full bg-[#E5E7EB] border-none rounded-2xl px-5 py-3.5 text-[15px] font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 placeholder:text-gray-500 text-gray-800 shadow-inner"
           />
         </div>
       )}
 
+      {/* Bottom Subtext */}
+      <p className="text-[13px] text-gray-500 font-medium mt-4 mb-6">
+        Already listed? Drop in the same App Store link to push your bid
+      </p>
+
       {/* Strict AI Checkbox Deterrent */}
-      <div className="mt-5 flex items-start gap-2 max-w-xl mx-auto text-left">
+      <div className="flex items-start gap-3 max-w-[500px] mx-auto text-left mb-6 bg-white p-4 rounded-xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)]">
         <input 
           type="checkbox" 
           id={`${formId}-verify`}
           checked={isVerifiedAi}
           onChange={(e) => setIsVerifiedAi(e.target.checked)}
-          className="mt-1 shrink-0 accent-brand-500 w-4 h-4 rounded border-border"
+          className="mt-1 shrink-0 accent-blue-500 w-4 h-4 rounded border-gray-300"
         />
-        <label htmlFor={`${formId}-verify`} className="text-xs text-muted-foreground cursor-pointer">
-          <strong className="text-foreground">I confirm this is an AI Agent or Product.</strong> Non-AI submissions will be permanently deleted without a refund.
+        <label htmlFor={`${formId}-verify`} className="text-[13px] text-gray-600 cursor-pointer">
+          <strong className="text-gray-900 block mb-1 text-[14px]">I confirm this is an AI Agent or Product.</strong>
+          Non-AI submissions will be permanently deleted without a refund.
         </label>
       </div>
 
-      {error && <p className="text-xs font-medium text-red-400 bg-red-400/10 py-2 px-3 rounded-md border border-red-400/20 mt-4">{error}</p>}
-
-      {/* Bottom Subtext */}
-      <p className="text-xs text-muted-foreground mt-4 mb-6">
-        Already on the list? Enter the same URL or @handle and up your bid to get back to the top.
-      </p>
+      {error && <p className="text-[13px] font-medium text-red-600 bg-red-50 py-3 px-4 rounded-xl border border-red-100 max-w-[500px] w-full">{error}</p>}
 
       {takeoverEnabled && (
         <button
@@ -213,10 +210,10 @@ export default function BidForm({
           disabled={takingOver || takeoverActive || !identity.trim() || !isVerifiedAi}
           onClick={handleTakeover}
           className={cn(
-            "shrink-0 tracking-[-0.5px] font-semibold px-4 py-2 text-[13px] sm:text-[14px] rounded-full transition-colors shadow-none",
+            "shrink-0 font-bold px-6 py-3 text-[14px] sm:text-[15px] rounded-full transition-all mt-2",
             takeoverActive || (!identity.trim() || !isVerifiedAi)
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-red-100 text-red-600 hover:bg-red-200"
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
+              : "bg-red-500 text-white hover:bg-red-600 shadow-[0_4px_0_#991B1B] active:translate-y-[4px] active:shadow-none"
           )}
         >
           {takingOver
