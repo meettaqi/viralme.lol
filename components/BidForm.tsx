@@ -142,7 +142,7 @@ export default function BidForm({
         <span>for your AI product</span>
       </h1>
 
-      <p className="text-[16px] sm:text-[18px] font-medium text-gray-500 leading-snug max-w-xl mx-auto mb-8">
+      <p className="text-[15px] sm:text-[16px] font-medium text-gray-500 leading-snug max-w-2xl mx-auto mb-8">
         The verified AI products directory. <strong className="text-brand-500 font-bold">Bids start at $2.</strong><br className="hidden sm:block" />
         Bid under the top price to secure a spot exactly where your amount ranks.
       </p>
