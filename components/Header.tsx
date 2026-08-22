@@ -9,7 +9,7 @@ export default function Header({
   totalVisitors?: number;
 }) {
   return (
-    <header className="mt-6 sm:mt-8 mb-8 grid grid-cols-2 sm:grid-cols-3 items-center w-full">
+    <header className="mt-4 sm:mt-4 mb-5 grid grid-cols-2 sm:grid-cols-3 items-center w-full">
       {/* Left (Live Visitors on desktop, hidden on mobile) */}
       <LiveVisitors initialVisitors={liveVisitors ?? null} totalVisitors={totalVisitors} />
 

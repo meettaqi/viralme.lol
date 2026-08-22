@@ -35,7 +35,7 @@ export default function HomeClient({
   return (
     <div className="flex flex-col items-center w-full max-w-3xl mx-auto mt-0 sm:mt-2">
       {/* Live Visitors & Open Startup Badge */}
-      <div className="flex items-center justify-center mb-6">
+      <div className="flex items-center justify-center mb-4">
         <a 
           href="https://datafa.st/share/6a88058f18a92e2689e02ab1" 
           target="_blank" 
@@ -60,7 +60,7 @@ export default function HomeClient({
       </div>
 
       {/* Bidding Terminal (Inline) */}
-      <div className="w-full mb-8">
+      <div className="w-full mb-6">
         <BidForm
           bids={initialBids}
           key={bidAmount}
