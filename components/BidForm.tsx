@@ -115,34 +115,32 @@ export default function BidForm({
   }
 
   return (
-    <div className="flex flex-col items-center text-center w-full max-w-2xl mx-auto">
-      <h1 className="text-[44px] sm:text-[56px] leading-[1.1] font-extrabold text-[#111827] tracking-tight mb-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-3">
+    <div className="flex flex-col items-center text-center w-full max-w-4xl mx-auto">
+      <h1 className="text-[40px] sm:text-[56px] md:text-[64px] leading-[1.1] font-extrabold text-[#111827] tracking-tight mb-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-3">
         <span>Claim <span className="text-brand-500">#{projectedRank}</span> for</span>
         
         <div className="flex items-center justify-center gap-2 sm:gap-3 bg-white border border-gray-100 shadow-sm p-1.5 sm:p-2 rounded-[24px]">
           <button 
             onClick={() => adjust(-STEP)}
-            className="w-[44px] h-[44px] sm:w-[52px] sm:h-[52px] rounded-[16px] bg-brand-500/10 text-brand-500 flex items-center justify-center hover:bg-brand-500/20 transition-colors text-[28px] sm:text-[36px] leading-none font-medium pb-1 shrink-0"
+            className="w-[52px] h-[52px] sm:w-[64px] sm:h-[64px] rounded-[16px] bg-brand-500/10 text-brand-500 flex items-center justify-center hover:bg-brand-500/20 transition-colors text-[40px] sm:text-[56px] md:text-[64px] leading-none font-extrabold shrink-0"
           >
-            -
+            <span className="relative -top-[3px]">-</span>
           </button>
           <div className="text-brand-500 tabular-nums flex items-center min-w-[2.5ch] justify-center px-1">
-            <span className="text-[48px] sm:text-[56px] font-extrabold tracking-tight leading-none">
+            <span className="text-[40px] sm:text-[56px] md:text-[64px] font-extrabold tracking-tight leading-none">
               ${amount}
             </span>
           </div>
           <button 
             onClick={() => adjust(STEP)}
-            className="w-[44px] h-[44px] sm:w-[52px] sm:h-[52px] rounded-[16px] bg-brand-500/10 text-brand-500 flex items-center justify-center hover:bg-brand-500/20 transition-colors text-[28px] sm:text-[36px] leading-none font-medium pb-1 shrink-0"
+            className="w-[52px] h-[52px] sm:w-[64px] sm:h-[64px] rounded-[16px] bg-brand-500/10 text-brand-500 flex items-center justify-center hover:bg-brand-500/20 transition-colors text-[40px] sm:text-[56px] md:text-[64px] leading-none font-extrabold shrink-0"
           >
-            +
+            <span className="relative -top-[1px]">+</span>
           </button>
         </div>
+
+        <span>for your AI product</span>
       </h1>
-      
-      <p className="text-[20px] sm:text-[24px] font-bold text-gray-900 mb-6">
-        for your AI product
-      </p>
 
       <p className="text-[16px] sm:text-[18px] font-medium text-gray-500 leading-snug max-w-xl mx-auto mb-8">
         <strong className="text-brand-500 font-bold">Bids start at $2.</strong> Bid under the #1 price and you still land on the board - exactly where your amount ranks.
