@@ -218,14 +218,14 @@ export default function BidForm({
 
       {error && <p className="text-[13px] font-medium text-red-600 bg-red-50 py-3 px-4 rounded-xl border border-red-100 max-w-[500px] w-full">{error}</p>}
 
-      {takeoverEnabled && (
+      {takeoverEnabled && identity.trim().length > 0 && (
         <button
           type="button"
-          disabled={takingOver || takeoverActive || !identity.trim() || !isVerifiedAi}
+          disabled={takingOver || takeoverActive || !isVerifiedAi}
           onClick={handleTakeover}
           className={cn(
             "shrink-0 font-bold px-6 py-3 text-[14px] sm:text-[15px] rounded-full transition-all mt-2",
-            takeoverActive || (!identity.trim() || !isVerifiedAi)
+            takeoverActive || !isVerifiedAi
               ? "bg-gray-100 text-gray-400 cursor-not-allowed shadow-none"
               : "bg-red-500 text-white hover:bg-red-600 shadow-[0_4px_0_#991B1B] active:translate-y-[4px] active:shadow-none"
           )}
