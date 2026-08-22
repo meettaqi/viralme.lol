@@ -146,8 +146,8 @@ export async function upsertPendingBid(
   const now = new Date().toISOString();
 
   if (existing) {
-    if (bid.amount >= Number(existing.amount)) {
-      const newBaseAmount = bid.baseAmount ?? bid.amount;
+    const newBaseAmount = bid.baseAmount ?? bid.amount;
+    if (newBaseAmount >= Number(existing.base_amount)) {
       const newBoostTotal = bid.boostTotal ?? existing.boost_total;
 
       const updateData = {
