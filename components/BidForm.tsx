@@ -116,10 +116,6 @@ export default function BidForm({
 
   return (
     <div className="flex flex-col items-center text-center w-full max-w-4xl mx-auto relative">
-      <p className="text-[13px] sm:text-[15px] font-bold text-gray-400 tracking-widest uppercase mb-4 sm:mb-6">
-        The Verified AI Product Directory
-      </p>
-
       <h1 className="relative text-[40px] sm:text-[56px] md:text-[64px] leading-[1.1] font-extrabold text-[#111827] tracking-tight mb-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-3">
         <span>Claim <span className="text-brand-500">#{projectedRank}</span> for</span>
         
@@ -147,7 +143,8 @@ export default function BidForm({
       </h1>
 
       <p className="text-[16px] sm:text-[18px] font-medium text-gray-500 leading-snug max-w-xl mx-auto mb-8">
-        <strong className="text-brand-500 font-bold">Bids start at $2.</strong> Bid under the #1 price and you still land on the board - exactly where your amount ranks.
+        The verified AI products directory. <strong className="text-brand-500 font-bold">Bids start at $2.</strong><br className="hidden sm:block" />
+        Bid under the top price to secure a spot exactly where your amount ranks.
       </p>
 
       {/* Input Row Form */}
