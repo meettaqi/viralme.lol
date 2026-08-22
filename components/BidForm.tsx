@@ -187,12 +187,10 @@ export default function BidForm({
           disabled={takingOver || takeoverActive || !identity.trim() || !isVerifiedAi}
           onClick={handleTakeover}
           className={cn(
-            "px-4 py-1.5 rounded-full text-xs font-bold transition-all border",
-            takeoverActive
-              ? "bg-muted/50 border-border/30 text-muted-foreground cursor-not-allowed"
-              : (!identity.trim() || !isVerifiedAi)
-              ? "bg-muted/30 border-border/30 text-muted-foreground cursor-not-allowed opacity-70"
-              : "bg-orange-500/10 border-orange-500/30 text-orange-500 hover:bg-orange-500/20 shadow-sm"
+            "shrink-0 tracking-[-0.5px] font-semibold px-4 py-2 text-[13px] sm:text-[14px] rounded-full transition-colors shadow-none",
+            takeoverActive || (!identity.trim() || !isVerifiedAi)
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-red-100 text-red-600 hover:bg-red-200"
           )}
         >
           {takingOver

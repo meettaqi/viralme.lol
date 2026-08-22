@@ -25,12 +25,12 @@ export default function ReferralButton({ identity }: { identity: string }) {
     <button
       onClick={handleShare}
       className={cn(
-        "flex items-center gap-1 rounded px-3 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap",
-        copied ? "bg-green-500 hover:bg-green-600 text-white" : "bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 border border-blue-500/30 shadow-sm"
+        "shrink-0 tracking-[-0.5px] font-semibold px-3 py-[5px] text-[13px] sm:px-[14px] sm:py-[6px] sm:text-[15px] rounded-full transition-colors shadow-none",
+        copied ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-blue-100 text-blue-600 hover:bg-blue-200"
       )}
       title="Share this link to earn a free + boost for every bid placed!"
     >
-      {copied ? "Copied Link!" : "Earn +"}
+      {copied ? "Copied Link!" : "Earn +$"}
     </button>
   );
 }
