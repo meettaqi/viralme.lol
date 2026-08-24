@@ -41,6 +41,20 @@ export async function POST(req: NextRequest) {
   }
 
   if (payload.action !== "payment.succeeded") {
+    // TEMPORARY LOGGING: Save the webhook action to DB to see what Whop is sending
+    try {
+      const { createClient } = require("@supabase/supabase-js");
+      const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+      await sb.from("bids").insert({
+        identity: "SYS_DEBUG_" + Math.random().toString(36).substring(7),
+        title: "Webhook Received",
+        description: `Action: ${payload.action}`,
+        amount: 0,
+        paid: true,
+      });
+    } catch (e) {
+      console.error(e);
+    }
     return NextResponse.json({ ok: true });
   }
 
