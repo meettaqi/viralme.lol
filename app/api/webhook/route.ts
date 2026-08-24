@@ -46,6 +46,20 @@ export async function POST(req: NextRequest) {
 
   const payment = payload.data;
   
+  // Clean up the Whop membership right away so the user can purchase this $0 plan again later
+  // without hitting the "one active app installment at a time" anti-abuse limit.
+  const membershipId = payment.membership?.id;
+  if (membershipId) {
+    try {
+      const { WhopClient } = require("@whop/sdk");
+      const whop = new WhopClient({ token: process.env.WHOP_API_KEY });
+      await whop.memberships.cancel({ id: membershipId, reason: "Viralme auto-cleanup for repeat bids" });
+      console.log(`[webhook] Canceled membership ${membershipId} for repeat bids`);
+    } catch (e) {
+      console.error("[webhook] Failed to cancel membership", membershipId, e);
+    }
+  }
+
   // In Whop API v2, the metadata from the plan creation should carry over to the payment/membership event.
   const meta = (payment.metadata ?? payment.plan?.metadata ?? {}) as Record<string, string>;
   const { type = "bid", id = generateId(), identity, amount, charge, vaultOffer, vaultSecret, title = "", description = "" } = meta;
