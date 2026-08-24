@@ -19,7 +19,7 @@ export default function Header({
           <img 
             src="/logo.png" 
             alt="Viralme.lol - Pay-to-Rank AI Product Directory" 
-            className="h-10 sm:h-12 w-auto object-contain"
+            className="h-16 sm:h-20 md:h-24 w-auto object-contain scale-110 origin-left"
           />
         </Link>
       </div>
