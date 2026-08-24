@@ -9,13 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@polar-sh/sdk": "^0.33.0",
     "@supabase/supabase-js": "^2.112.3",
+    "@whop/sdk": "^1.0.13",
     "clsx": "^2.1.1",
     "datafast": "^3.0.18",
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",
+    "standardwebhooks": "^1.0.0",
     "tailwind-merge": "^2.4.0"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateEvent, WebhookVerificationError } from "@polar-sh/sdk/webhooks";
+import { Webhook } from "standardwebhooks";
 import {
   confirmPayment,
   updateOGData,
@@ -15,46 +15,49 @@ export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
-  const webhookSecret = process.env.POLAR_WEBHOOK_SECRET;
+  const webhookSecret = process.env.WHOP_WEBHOOK_SECRET;
 
   if (!webhookSecret) {
-    console.error("[webhook] Missing POLAR_WEBHOOK_SECRET");
+    console.error("[webhook] Missing WHOP_WEBHOOK_SECRET");
     return NextResponse.json({ error: "Server config error" }, { status: 500 });
   }
 
-  let event: ReturnType<typeof validateEvent>;
+  const wh = new Webhook(webhookSecret);
+  const headers = Object.fromEntries(req.headers);
+  
+  let payload: any;
   try {
-    event = validateEvent(body, Object.fromEntries(req.headers), webhookSecret);
+    payload = wh.verify(body, headers);
   } catch (err) {
-    if (err instanceof WebhookVerificationError) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
-    }
-    throw err;
+    console.error("[webhook] Signature verification failed:", err);
+    return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
   }
 
-  if (event.type !== "order.paid") {
+  if (payload.action !== "payment.succeeded") {
     return NextResponse.json({ ok: true });
   }
 
-  const order = event.data;
-  const meta = (order.metadata ?? {}) as Record<string, string>;
-  const { type = "bid", id, identity, amount, charge, vaultOffer, vaultSecret, title = "", description = "" } = meta;
+  const payment = payload.data;
+  
+  // In Whop API v2, the metadata from the plan creation should carry over to the payment/membership event.
+  // Sometimes Whop puts it inside data.plan.metadata or data.metadata or data.custom_fields.
+  // We'll extract metadata from the event payload. 
+  // It's typically at `payment.metadata` or `payment.product.metadata` depending on Whop's exact structure for v2.
+  // We know we sent it inside `metadata` when creating the plan.
+  const meta = (payment.metadata ?? payment.plan?.metadata ?? {}) as Record<string, string>;
+  const { type = "bid", id = generateId(), identity, amount, charge, vaultOffer, vaultSecret, title = "", description = "" } = meta;
 
   if (vaultOffer && vaultSecret) {
     saveLeadMagnet(identity, vaultOffer, vaultSecret);
   }
 
   if (!identity || !amount) {
-    console.error("[webhook] Missing metadata", order.id);
+    console.error("[webhook] Missing metadata in payment event", payment.id);
     return NextResponse.json({ ok: true });
   }
 
-
   const parsedAmount = parseInt(amount, 10);
   const actualCharge = type === "bid" ? parseInt(charge || amount, 10) : parsedAmount;
-
-  // Referral boost logic removed to prevent referrers from stealing the #1 spot
-  // from the person they referred.
 
   // ── BOOST ─────────────────────────────────────────────────────────────────
   if (type === "boost") {
@@ -67,8 +70,6 @@ export async function POST(req: NextRequest) {
     const takeover = await getTakeover();
     
     // If a takeover is already active and it's NOT a retry from the same user, ignore it.
-    // This prevents a race condition where two people open checkout simultaneously
-    // and the second payer overwrites the first payer's 3-hour lock.
     if (takeover.active && takeover.identity !== identity) {
       console.error("[webhook] Takeover race condition: dropped payment from", identity);
       return NextResponse.json({ ok: true, note: "Takeover already active" });
@@ -78,7 +79,6 @@ export async function POST(req: NextRequest) {
     
     if (!isRetry) {
       await activateTakeover(identity, identity, parsedAmount);
-      // Scrape title in background
       fetchOG(identity)
         .then(async ({ title }) => {
           if (title) await activateTakeover(identity, title, parsedAmount);

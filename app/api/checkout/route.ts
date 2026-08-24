@@ -14,16 +14,16 @@ import { getSettings } from "@/lib/settings";
 import { saveLeadMagnet } from "@/lib/leads";
 
 const DEMO_MODE =
-  !process.env.POLAR_ACCESS_TOKEN ||
-  process.env.POLAR_ACCESS_TOKEN === "REPLACE_ME";
+  !process.env.WHOP_API_KEY ||
+  process.env.WHOP_API_KEY === "REPLACE_ME";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type CheckoutType = "bid" | "boost" | "takeover";
 
 interface RequestBody {
   type: CheckoutType;
-  identity: string; // target identity (for boost/takeover = the entry being boosted/taken over)
-  amount?: number; // for bid: desired total bid; for boost: $1-$5
+  identity: string;
+  amount?: number;
   referredBy?: string;
   vaultOffer?: string;
   vaultSecret?: string;
@@ -38,10 +38,43 @@ async function chargeForBid(identity: string, desiredAmount: number): Promise<nu
   return charge;
 }
 
+async function createWhopCheckout(charge: number, metadata: Record<string, string>, siteUrl: string) {
+  const accountId = process.env.WHOP_COMPANY_ID || "biz_SIuMh5ziOk95R5";
+  const productId = process.env.WHOP_PRODUCT_ID || "prod_Zq065SmwLUowB";
+  const apiKey = process.env.WHOP_API_KEY;
+
+  if (!apiKey) throw new Error("WHOP_API_KEY not configured");
+
+  const res = await fetch("https://api.whop.com/v2/plans", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      account_id: accountId,
+      product_id: productId,
+      initial_price: charge,
+      plan_type: "one_time",
+      metadata: metadata,
+    })
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("[Whop API Error]", text);
+    throw new Error(`Whop API returned ${res.status}`);
+  }
+
+  const data = await res.json();
+  
+  return data.direct_link;
+}
+
 // ── Demo mode handlers ────────────────────────────────────────────────────────
 async function demoHandleBid(identity: string, amount: number, siteUrl: string, title?: string, description?: string) {
   const id = generateId();
-  const sessionId = "polar_demo_" + id;
+  const sessionId = "whop_demo_" + id;
   await upsertPendingBid({
     identity,
     amount,
@@ -103,27 +136,17 @@ export async function POST(req: NextRequest) {
     }
 
     // ── LIVE MODE ────────────────────────────────────────────────────────────
-    const productId = process.env.POLAR_PRODUCT_ID;
-    if (!productId) {
-      return NextResponse.json({ error: "POLAR_PRODUCT_ID not configured" }, { status: 500 });
-    }
-    const { polar } = await import("@/lib/polar");
-    const clientIp =
-      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
-      req.headers.get("x-real-ip") ??
-      undefined;
 
     if (type === "boost") {
       const boostAmt = Math.min(5, Math.max(1, isNaN(parsedAmount) ? 1 : parsedAmount));
       const id = generateId();
-      const checkout = await polar.checkouts.create({
-        products: [productId],
-        amount: boostAmt * 100,
-        metadata: { type: "boost", id, identity, amount: String(boostAmt), ...(referredBy && { referredBy }) },
-        successUrl: `${siteUrl}/success?checkout_id={CHECKOUT_ID}&type=boost`,
-        customerIpAddress: clientIp,
-      });
-      return NextResponse.json({ url: checkout.url });
+      
+      const checkoutUrl = await createWhopCheckout(
+        boostAmt, 
+        { type: "boost", id, identity, amount: String(boostAmt), ...(referredBy && { referredBy }) },
+        siteUrl
+      );
+      return NextResponse.json({ url: checkoutUrl });
     }
 
     if (type === "takeover") {
@@ -140,14 +163,13 @@ export async function POST(req: NextRequest) {
       const topBid = await getTopBid();
       const cost = topBid > 0 ? topBid * settings.takeoverMultiplier : (settings.takeoverMultiplier * 10 || 50);
       const id = generateId();
-      const checkout = await polar.checkouts.create({
-        products: [productId],
-        amount: cost * 100,
-        metadata: { type: "takeover", id, identity, amount: String(cost), ...(referredBy && { referredBy }) },
-        successUrl: `${siteUrl}/success?checkout_id={CHECKOUT_ID}&type=takeover`,
-        customerIpAddress: clientIp,
-      });
-      return NextResponse.json({ url: checkout.url, cost });
+      
+      const checkoutUrl = await createWhopCheckout(
+        cost, 
+        { type: "takeover", id, identity, amount: String(cost), ...(referredBy && { referredBy }) },
+        siteUrl
+      );
+      return NextResponse.json({ url: checkoutUrl, cost });
     }
 
     // type === "bid"
@@ -156,10 +178,10 @@ export async function POST(req: NextRequest) {
     }
     const charge = await chargeForBid(identity, parsedAmount);
     const id = generateId();
-    const checkout = await polar.checkouts.create({
-      products: [productId],
-      amount: charge * 100,
-      metadata: { 
+    
+    const checkoutUrl = await createWhopCheckout(
+      charge, 
+      { 
         type: "bid", 
         id, 
         identity, 
@@ -170,11 +192,10 @@ export async function POST(req: NextRequest) {
         ...(vaultOffer && { vaultOffer: vaultOffer.slice(0, 100) }),
         ...(vaultSecret && { vaultSecret: vaultSecret.slice(0, 100) })
       },
-      successUrl: `${siteUrl}/success?checkout_id={CHECKOUT_ID}`,
-      customerIpAddress: clientIp,
-    });
+      siteUrl
+    );
     
-    return NextResponse.json({ url: checkout.url, charge });
+    return NextResponse.json({ url: checkoutUrl, charge });
   } catch (err: any) {
     console.error("[POST /api/checkout]", err);
     return NextResponse.json({ error: err.message || "Internal error" }, { status: 500 });
