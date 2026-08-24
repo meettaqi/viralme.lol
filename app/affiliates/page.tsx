@@ -33,31 +33,31 @@ export default function AffiliatesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#EAEAEA] text-[#1a2b3c] font-sans pb-20 pt-16">
+    <div className="min-h-screen bg-[#EBEBEB] text-[#1a2b3c] font-sans pb-20 pt-16">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         
         {/* Step 1 (Inferred from context) */}
         <div className="flex items-start gap-5 mb-16">
-          <div className="w-[30px] h-[30px] rounded-full bg-[#3b82f6] text-white flex items-center justify-center font-semibold shrink-0 shadow-sm text-sm mt-0.5">
+          <div className="w-[30px] h-[30px] rounded-full bg-[#3b82f6] text-white flex items-center justify-center font-semibold shrink-0  text-sm mt-0.5">
             1
           </div>
           <div>
             <h2 className="text-[20px] font-bold text-[#111827] mb-2 tracking-tight">Join the program on Whop</h2>
             <p className="text-[#4b5563] mb-4 text-[17px] tracking-tight">Click below to join our affiliate program on Whop. You get 50% on every sale.</p>
             <a 
-              href="https://whop.com/checkout/prod_Zq065SmwLUowB?a=affiliate" 
+              href="https://whop.com/viralme-lol/affiliates" 
               target="_blank" 
               rel="noreferrer" 
-              className="bg-[#111827] text-white px-5 py-2.5 rounded-lg font-medium inline-block hover:bg-gray-800 transition-colors shadow-sm"
+              className="bg-[#111827] text-white px-5 py-2.5 rounded-lg font-medium inline-block hover:bg-gray-800 transition-colors "
             >
-              Join on Whop
+              Open the Viralme.lol Program
             </a>
           </div>
         </div>
 
         {/* Step 2 */}
         <div className="flex items-start gap-5 mb-16">
-          <div className="w-[30px] h-[30px] rounded-full bg-[#3b82f6] text-white flex items-center justify-center font-semibold shrink-0 shadow-sm text-sm mt-0.5">
+          <div className="w-[30px] h-[30px] rounded-full bg-[#3b82f6] text-white flex items-center justify-center font-semibold shrink-0  text-sm mt-0.5">
             2
           </div>
           <div className="w-full">
@@ -112,32 +112,32 @@ export default function AffiliatesPage() {
             Paste it here - or just type your Whop username - for a shorter one on our domain. Same tracking, same 50%.
           </p>
           
-          <div className="bg-[#f9fafb] rounded-[24px] p-6 sm:p-7 shadow-sm border border-transparent">
+          <div className="bg-[#F5F5F5] rounded-[24px] p-6 sm:p-7  border border-transparent">
             <h3 className="font-semibold text-[#111827] mb-1 text-[15px] tracking-tight">Paste your Whop link</h3>
             <p className="text-[15px] text-[#6b7280] mb-5 tracking-tight">Or just type your Whop username - either works.</p>
             
             <input 
               type="text" 
               placeholder="https://whop.com/e/.../yourname"
-              className="w-full bg-[#d1d5db] border-transparent rounded-[16px] px-5 py-3 text-[#111827] placeholder:text-[#6b7280] focus:outline-none focus:ring-2 focus:ring-white transition-colors"
+              className="w-full bg-[#E1E1E1] border-transparent rounded-[16px] px-5 py-3 text-[#111827] placeholder:text-[#6b7280] focus:outline-none focus:ring-2 focus:ring-white transition-colors"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
             />
             
             {inputValue && (
-              <div className="mt-5 p-4 sm:p-5 bg-white rounded-[16px] border border-gray-200 shadow-sm animate-in fade-in">
+              <div className="mt-5 p-4 sm:p-5 bg-white rounded-[16px] border border-gray-200  animate-in fade-in">
                 <p className="text-sm font-semibold text-[#111827] mb-3">Your nicer link:</p>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                   <div className="relative flex-grow">
                     <input 
                       readOnly
                       value={nicerLink}
-                      className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-[#111827] font-mono text-[14px]"
+                      className="w-full bg-[#F5F5F5] border border-gray-200 rounded-xl px-4 py-3 text-[#111827] font-mono text-[14px]"
                     />
                   </div>
                   <button 
                     onClick={copyToClipboard}
-                    className="bg-[#111827] hover:bg-gray-800 text-white px-6 py-3 rounded-xl font-medium transition-colors shadow-sm flex items-center justify-center gap-2 shrink-0"
+                    className="bg-[#111827] hover:bg-gray-800 text-white px-6 py-3 rounded-xl font-medium transition-colors  flex items-center justify-center gap-2 shrink-0"
                   >
                     {copied ? "Copied!" : "Copy"}
                   </button>
@@ -153,21 +153,21 @@ export default function AffiliatesPage() {
           
           <ul className="space-y-4 text-[#4b5563] text-[17px] tracking-tight">
             <li className="flex items-start">
-              <span className="text-[#3b82f6] mr-2 mt-0.5 text-[24px] leading-none">•</span>
+              <span className="text-[#2778F5] mr-2 mt-0.5 text-[24px] leading-none">•</span>
               <span>No ceiling on a referral - people raise their bid to hold #1, and you earn on every raise.</span>
             </li>
             <li className="flex items-start">
-              <span className="text-[#3b82f6] mr-2 mt-0.5 text-[24px] leading-none">•</span>
+              <span className="text-[#2778F5] mr-2 mt-0.5 text-[24px] leading-none">•</span>
               <span>A click sticks for <strong className="font-semibold text-[#111827]">90 days</strong>, and refunds are reversed.</span>
             </li>
             <li className="flex items-start">
-              <span className="text-[#3b82f6] mr-2 mt-0.5 text-[24px] leading-none">•</span>
-              <span>Clicks and earnings live in your <a href="https://whop.com/dash" target="_blank" rel="noreferrer" className="text-[#3b82f6] hover:underline font-medium">Whop dashboard</a>. Those are the numbers that pay.</span>
+              <span className="text-[#2778F5] mr-2 mt-0.5 text-[24px] leading-none">•</span>
+              <span>Clicks and earnings live in your <a href="https://whop.com/dash" target="_blank" rel="noreferrer" className="text-[#2778F5] hover:underline font-medium">Whop dashboard</a>. Those are the numbers that pay.</span>
             </li>
           </ul>
           
           <p className="mt-12 text-[15px] text-[#6b7280] tracking-tight">
-            Questions? Read the <Link href="/rules" className="text-[#3b82f6] hover:underline">rules</Link>.
+            Questions? Read the <Link href="/rules" className="text-[#2778F5] hover:underline">rules</Link>.
           </p>
         </div>
       </div>
