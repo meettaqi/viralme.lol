@@ -1,157 +1,189 @@
-import Link from "next/link";
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Partner Affiliates - ViralMe.lol",
-  description: "Become a partner affiliate for ViralMe.lol and earn 50% lifetime recurring commissions.",
-};
+import Link from "next/link";
+import { useState } from "react";
 
 export default function AffiliatesPage() {
+  const [inputValue, setInputValue] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const extractUsername = (input: string) => {
+    if (!input) return "";
+    // If it's a full link like https://whop.com/e/trk_.../username, extract the last part
+    if (input.includes("/")) {
+      const parts = input.split("/");
+      const last = parts[parts.length - 1];
+      if (last.includes("?")) {
+        return last.split("?")[0];
+      }
+      return last;
+    }
+    return input;
+  };
+
+  const username = extractUsername(inputValue);
+  const nicerLink = `https://viralme.lol/?ref=${username || "yourname"}`;
+
+  const copyToClipboard = () => {
+    if (username) {
+      navigator.clipboard.writeText(`https://viralme.lol/?ref=${username}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Navigation */}
-      <nav className="w-full bg-white border-b border-gray-200 py-4 px-6 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="ViralMe.lol" className="h-8 w-auto object-contain" />
-            <span className="sr-only">
-              Viral<span className="text-[brand-500]">Me</span>.lol
-            </span>
-          </Link>
-          <Link 
-            href="/" 
-            className="text-sm font-semibold text-gray-500 hover:text-black transition-colors"
-          >
-            Back to Home
-          </Link>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <main className="flex-grow">
-        <section className="bg-white py-24 px-6 text-center border-b border-gray-200 overflow-hidden relative">
-          {/* Background decoration */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] opacity-10 pointer-events-none" 
-               style={{ background: 'radial-gradient(ellipse at top, var(--brand-500) 0%, transparent 70%)' }}></div>
-          
-          <div className="max-w-3xl mx-auto relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="inline-flex items-center justify-center px-4 py-1.5 mb-6 text-sm font-bold text-[brand-500] bg-[brand-500]/10 rounded-full border border-[brand-500]/20">
-              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path></svg>
-              High-Converting Partner Program
-            </div>
-            <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight text-gray-900 mb-6 leading-[1.1]">
-              Earn <span className="text-[brand-500]">50%</span> from<br/>every referral.
-            </h1>
-            <p className="text-xl sm:text-2xl text-gray-500 font-medium mb-10 max-w-2xl mx-auto leading-relaxed">
-              Partner with ViralMe.lol and get half of every payment for life. Payouts are handled automatically via Whop.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <a 
-                href="https://whop.com/checkout/prod_Zq065SmwLUowB?a=affiliate" // Replace with actual affiliate signup link
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 bg-[brand-500] text-white hover:brightness-110 font-bold text-xl px-10 py-5 rounded-full shadow-[0_8px_30px_rgb(244,29,26,0.3)] hover:shadow-[0_8px_30px_rgb(244,29,26,0.4)] active:scale-95 transition-all w-full sm:w-auto"
-              >
-                <span>Become an Affiliate</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </a>
-            </div>
+    <div className="min-h-screen bg-[#EAEAEA] text-[#1a2b3c] font-sans pb-20 pt-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+        
+        {/* Step 1 (Inferred from context) */}
+        <div className="flex items-start gap-5 mb-16">
+          <div className="w-[30px] h-[30px] rounded-full bg-[#3b82f6] text-white flex items-center justify-center font-semibold shrink-0 shadow-sm text-sm mt-0.5">
+            1
           </div>
-        </section>
-
-        {/* Feature Highlights */}
-        <section className="py-20 px-6 bg-gray-50">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                <div className="w-14 h-14 bg-[brand-500]/10 text-[brand-500] rounded-2xl flex items-center justify-center mb-6">
-                  <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">50% Commission</h3>
-                <p className="text-gray-500 font-medium leading-relaxed">
-                  You get 50% of the revenue for every single Bid, Boost, or Takeover purchased by your referrals. No limits.
-                </p>
-              </div>
-
-              <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                <div className="w-14 h-14 bg-[brand-500]/10 text-[brand-500] rounded-2xl flex items-center justify-center mb-6">
-                  <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">90-Day Cookie</h3>
-                <p className="text-gray-500 font-medium leading-relaxed">
-                  We use generous 90-day cookies. If they visit today and buy a top spot next month, you still get paid.
-                </p>
-              </div>
-
-              <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                <div className="w-14 h-14 bg-[brand-500]/10 text-[brand-500] rounded-2xl flex items-center justify-center mb-6">
-                  <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">Instant Payouts</h3>
-                <p className="text-gray-500 font-medium leading-relaxed">
-                  No more waiting for net-30 manual payments. Everything is securely tracked and paid out by Whop automatically.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* How It Works */}
-        <section className="py-24 px-6 bg-white border-t border-gray-200">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">How it works</h2>
-            <p className="text-xl text-gray-500 font-medium">Getting started takes less than two minutes.</p>
-          </div>
-
-          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 relative">
-            {/* Connecting lines for desktop */}
-            <div className="hidden md:block absolute top-12 left-1/6 right-1/6 h-[2px] bg-gray-100 -z-10"></div>
-            
-            <div className="text-center relative bg-white">
-              <div className="w-24 h-24 bg-gray-50 border-4 border-white rounded-full flex items-center justify-center text-3xl font-extrabold text-gray-300 mx-auto mb-6 shadow-sm">1</div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Join the Program</h3>
-              <p className="text-gray-500 font-medium px-4">Click the button below to join our Whop affiliate program instantly.</p>
-            </div>
-            
-            <div className="text-center relative bg-white">
-              <div className="w-24 h-24 bg-gray-50 border-4 border-white rounded-full flex items-center justify-center text-3xl font-extrabold text-gray-300 mx-auto mb-6 shadow-sm">2</div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Share your Link</h3>
-              <p className="text-gray-500 font-medium px-4">Share your unique affiliate link with developers, founders, and marketers.</p>
-            </div>
-            
-            <div className="text-center relative bg-white">
-              <div className="w-24 h-24 bg-gray-50 border-4 border-white rounded-full flex items-center justify-center text-3xl font-extrabold text-[brand-500] mx-auto mb-6 shadow-sm bg-[brand-500]/5">3</div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Earn Cash</h3>
-              <p className="text-gray-500 font-medium px-4">Watch your Whop dashboard as you earn 50% commission on every sale.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="py-24 px-6 bg-gray-900 text-center">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-8">Ready to start earning?</h2>
+          <div>
+            <h2 className="text-[20px] font-bold text-[#111827] mb-2 tracking-tight">Join the program on Whop</h2>
+            <p className="text-[#4b5563] mb-4 text-[17px] tracking-tight">Click below to join our affiliate program on Whop. You get 50% on every sale.</p>
             <a 
-              href="https://whop.com/checkout/prod_Zq065SmwLUowB?a=affiliate" // Replace with actual affiliate signup link
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-[brand-500] text-white hover:brightness-110 font-bold text-xl px-12 py-5 rounded-full shadow-[0_8px_30px_rgb(244,29,26,0.3)] transition-all active:scale-95"
+              href="https://whop.com/checkout/prod_Zq065SmwLUowB?a=affiliate" 
+              target="_blank" 
+              rel="noreferrer" 
+              className="bg-[#111827] text-white px-5 py-2.5 rounded-lg font-medium inline-block hover:bg-gray-800 transition-colors shadow-sm"
             >
-              Get Your Affiliate Link Now
+              Join on Whop
             </a>
           </div>
-        </section>
-      </main>
+        </div>
 
+        {/* Step 2 */}
+        <div className="flex items-start gap-5 mb-16">
+          <div className="w-[30px] h-[30px] rounded-full bg-[#3b82f6] text-white flex items-center justify-center font-semibold shrink-0 shadow-sm text-sm mt-0.5">
+            2
+          </div>
+          <div className="w-full">
+            <h2 className="text-[20px] font-bold text-[#111827] mb-3 tracking-tight">Copy your External link and promote it</h2>
+            <p className="text-[#4b5563] mb-5 text-[17px] tracking-tight">
+              Under <strong className="text-[#111827] font-semibold">Your affiliate links</strong>, copy the <span className="text-[#a05a41] bg-[#42261f] bg-opacity-10 px-1.5 py-0.5 rounded text-[13px] font-semibold border border-[#a05a41] border-opacity-20">External</span> row - <strong className="text-[#111827] font-semibold">ViralMe.lol board</strong>. On a phone, swipe the table sideways to reach the copy button.
+            </p>
+            
+            {/* Black Card */}
+            <div className="bg-[#0f0f0f] rounded-[16px] p-6 shadow-xl mb-4 text-white overflow-x-auto">
+              <h3 className="font-medium mb-6 text-[15px] text-[#e5e7eb] tracking-tight">Your affiliate links</h3>
+              
+              <div className="min-w-[500px]">
+                <div className="grid grid-cols-12 gap-4 text-[13px] font-medium text-[#6b7280] mb-3 px-1 border-b border-[#262626] pb-3">
+                  <div className="col-span-3">Type</div>
+                  <div className="col-span-4">Name</div>
+                  <div className="col-span-5">Affiliate link</div>
+                </div>
+                
+                <div className="grid grid-cols-12 gap-4 text-sm items-center border-b border-[#262626] py-3.5 px-1">
+                  <div className="col-span-3">
+                    <span className="bg-[#381c15] text-[#e0653d] px-2 py-0.5 rounded text-[12px] font-medium">External</span>
+                  </div>
+                  <div className="col-span-4 font-semibold text-white text-[14px]">ViralMe.lol board</div>
+                  <div className="col-span-5 flex items-center justify-between font-mono text-[13px] text-[#9ca3af]">
+                    <span>whop.com/e/trk_.../yourname</span>
+                    <div className="w-[26px] h-[26px] rounded border border-[#22c55e] flex items-center justify-center text-[#22c55e] cursor-pointer hover:bg-[#22c55e]/10 transition-colors">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-12 gap-4 text-sm items-center pt-3.5 px-1 opacity-60">
+                  <div className="col-span-3">
+                    <span className="bg-[#0b2615] text-[#22c55e] px-2 py-0.5 rounded text-[12px] font-medium">Company</span>
+                  </div>
+                  <div className="col-span-4 text-[#6b7280] text-[14px]">Viral Me</div>
+                  <div className="col-span-5 font-mono text-[13px] text-[#6b7280]">
+                    whop.com/viralme?a=yourname
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p className="text-[13px] text-[#6b7280] tracking-tight">Tap to open your real links. Copy the <strong className="text-[#374151] font-semibold">External</strong> row - the <strong className="text-[#374151] font-semibold">Company</strong> one goes to our storefront, not the board.</p>
+          </div>
+        </div>
+
+        {/* Make it a nicer link */}
+        <div className="mb-16 ml-12">
+          <h2 className="text-[20px] font-bold text-[#111827] mb-2.5 tracking-tight">Make it a nicer link</h2>
+          <p className="text-[17px] text-[#4b5563] mb-6 tracking-tight">
+            Paste it here - or just type your Whop username - for a shorter one on our domain. Same tracking, same 50%.
+          </p>
+          
+          <div className="bg-[#f9fafb] rounded-[24px] p-6 sm:p-7 shadow-sm border border-transparent">
+            <h3 className="font-semibold text-[#111827] mb-1 text-[15px] tracking-tight">Paste your Whop link</h3>
+            <p className="text-[15px] text-[#6b7280] mb-5 tracking-tight">Or just type your Whop username - either works.</p>
+            
+            <input 
+              type="text" 
+              placeholder="https://whop.com/e/.../yourname"
+              className="w-full bg-[#d1d5db] border-transparent rounded-[16px] px-5 py-3 text-[#111827] placeholder:text-[#6b7280] focus:outline-none focus:ring-2 focus:ring-white transition-colors"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+            />
+            
+            {inputValue && (
+              <div className="mt-5 p-4 sm:p-5 bg-white rounded-[16px] border border-gray-200 shadow-sm animate-in fade-in">
+                <p className="text-sm font-semibold text-[#111827] mb-3">Your nicer link:</p>
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <div className="relative flex-grow">
+                    <input 
+                      readOnly
+                      value={nicerLink}
+                      className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-[#111827] font-mono text-[14px]"
+                    />
+                  </div>
+                  <button 
+                    onClick={copyToClipboard}
+                    className="bg-[#111827] hover:bg-gray-800 text-white px-6 py-3 rounded-xl font-medium transition-colors shadow-sm flex items-center justify-center gap-2 shrink-0"
+                  >
+                    {copied ? "Copied!" : "Copy"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Worth knowing */}
+        <div className="mb-24 ml-12">
+          <h2 className="text-[20px] font-bold text-[#111827] mb-6 tracking-tight">Worth knowing</h2>
+          
+          <ul className="space-y-4 text-[#4b5563] text-[17px] tracking-tight">
+            <li className="flex items-start">
+              <span className="text-[#3b82f6] mr-2 mt-0.5 text-[24px] leading-none">•</span>
+              <span>No ceiling on a referral - people raise their bid to hold #1, and you earn on every raise.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-[#3b82f6] mr-2 mt-0.5 text-[24px] leading-none">•</span>
+              <span>A click sticks for <strong className="font-semibold text-[#111827]">90 days</strong>, and refunds are reversed.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-[#3b82f6] mr-2 mt-0.5 text-[24px] leading-none">•</span>
+              <span>Clicks and earnings live in your <a href="https://whop.com/dash" target="_blank" rel="noreferrer" className="text-[#3b82f6] hover:underline font-medium">Whop dashboard</a>. Those are the numbers that pay.</span>
+            </li>
+          </ul>
+          
+          <p className="mt-12 text-[15px] text-[#6b7280] tracking-tight">
+            Questions? Read the <Link href="/rules" className="text-[#3b82f6] hover:underline">rules</Link>.
+          </p>
+        </div>
+      </div>
+      
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 py-10 px-6 text-center">
-        <p className="text-gray-400 font-medium text-sm">
-          © {new Date().getFullYear()} ViralMe.lol. All rights reserved. Payments processing by Whop.
-        </p>
-      </footer>
+      <div className="max-w-[1000px] mx-auto px-4 sm:px-6">
+        <div className="flex flex-col sm:flex-row justify-between items-center text-[14px] text-[#6b7280] mt-10 pt-10 pb-8 tracking-tight">
+          <p className="mb-4 sm:mb-0">Pay-to-rank AI product directory. Your bid is your rank.</p>
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+            <Link href="/rules" className="hover:text-[#374151]">Rules</Link>
+            <Link href="/" className="hover:text-[#374151]">Live stats</Link>
+            <Link href="/affiliates" className="hover:text-[#374151]">Affiliates</Link>
+            <span>Payments by Whop</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
