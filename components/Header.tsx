@@ -31,6 +31,9 @@ export default function Header({
 
       {/* Right Nav */}
       <nav className="flex items-center justify-end gap-3 sm:gap-4">
+        <Link href="/affiliates" className="hidden sm:block text-sm font-semibold text-brand-500 hover:text-brand-600 transition-colors">
+          Affiliates
+        </Link>
         <Link 
           href="/" 
           className="text-[13px] sm:text-sm font-bold bg-brand-500/10 text-brand-500 hover:bg-brand-500/20 px-4 py-2 rounded-full transition-colors border border-brand-500/20"
