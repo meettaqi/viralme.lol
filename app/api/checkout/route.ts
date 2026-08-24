@@ -38,7 +38,7 @@ async function chargeForBid(identity: string, desiredAmount: number): Promise<nu
   return charge;
 }
 
-async function createWhopCheckout(charge: number, metadata: Record<string, string>, siteUrl: string) {
+async function createWhopCheckout(charge: number, metadata: Record<string, string>, referredBy?: string) {
   const accountId = process.env.WHOP_COMPANY_ID || "biz_SIuMh5ziOk95R5";
   const productId = process.env.WHOP_PRODUCT_ID || "prod_Zq065SmwLUowB";
   const apiKey = process.env.WHOP_API_KEY;
@@ -68,7 +68,12 @@ async function createWhopCheckout(charge: number, metadata: Record<string, strin
 
   const data = await res.json();
   
-  return data.direct_link;
+  let link = data.direct_link;
+  if (referredBy) {
+    link += `?a=${referredBy}`;
+  }
+  
+  return link;
 }
 
 // ── Demo mode handlers ────────────────────────────────────────────────────────
@@ -144,7 +149,7 @@ export async function POST(req: NextRequest) {
       const checkoutUrl = await createWhopCheckout(
         boostAmt, 
         { type: "boost", id, identity, amount: String(boostAmt), ...(referredBy && { referredBy }) },
-        siteUrl
+        referredBy
       );
       return NextResponse.json({ url: checkoutUrl });
     }
@@ -167,7 +172,7 @@ export async function POST(req: NextRequest) {
       const checkoutUrl = await createWhopCheckout(
         cost, 
         { type: "takeover", id, identity, amount: String(cost), ...(referredBy && { referredBy }) },
-        siteUrl
+        referredBy
       );
       return NextResponse.json({ url: checkoutUrl, cost });
     }
@@ -190,9 +195,10 @@ export async function POST(req: NextRequest) {
         ...(title && { title: title.slice(0, 100) }),
         ...(description && { description: description.slice(0, 100) }),
         ...(vaultOffer && { vaultOffer: vaultOffer.slice(0, 100) }),
-        ...(vaultSecret && { vaultSecret: vaultSecret.slice(0, 100) })
+        ...(vaultSecret && { vaultSecret: vaultSecret.slice(0, 100) }),
+        ...(referredBy && { referredBy })
       },
-      siteUrl
+      referredBy
     );
     
     return NextResponse.json({ url: checkoutUrl, charge });
