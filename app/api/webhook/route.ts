@@ -15,11 +15,18 @@ export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
-  const webhookSecret = process.env.WHOP_WEBHOOK_SECRET;
+  let webhookSecret = process.env.WHOP_WEBHOOK_SECRET;
 
   if (!webhookSecret) {
     console.error("[webhook] Missing WHOP_WEBHOOK_SECRET");
     return NextResponse.json({ error: "Server config error" }, { status: 500 });
+  }
+
+  // Handle if Whop provided a hex secret instead of a standard webhook secret
+  if (webhookSecret.startsWith("ws_")) {
+    const hex = webhookSecret.replace("ws_", "");
+    const base64 = Buffer.from(hex, "hex").toString("base64");
+    webhookSecret = "whsec_" + base64;
   }
 
   const wh = new Webhook(webhookSecret);
@@ -40,10 +47,6 @@ export async function POST(req: NextRequest) {
   const payment = payload.data;
   
   // In Whop API v2, the metadata from the plan creation should carry over to the payment/membership event.
-  // Sometimes Whop puts it inside data.plan.metadata or data.metadata or data.custom_fields.
-  // We'll extract metadata from the event payload. 
-  // It's typically at `payment.metadata` or `payment.product.metadata` depending on Whop's exact structure for v2.
-  // We know we sent it inside `metadata` when creating the plan.
   const meta = (payment.metadata ?? payment.plan?.metadata ?? {}) as Record<string, string>;
   const { type = "bid", id = generateId(), identity, amount, charge, vaultOffer, vaultSecret, title = "", description = "" } = meta;
 
