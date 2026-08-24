@@ -57,6 +57,7 @@ async function createWhopCheckout(charge: number, metadata: Record<string, strin
       initial_price: charge,
       plan_type: "one_time",
       metadata: metadata,
+      stock: 1, // Fixes Whop "sold out" error, allows exactly one purchase of this unique plan link
     })
   });
 
