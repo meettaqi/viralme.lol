@@ -49,21 +49,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
   }
 
-  if (payload.action !== "payment.succeeded") {
-    // TEMPORARY LOGGING: Save the webhook action to DB to see what Whop is sending
-    try {
-      const { createClient } = require("@supabase/supabase-js");
-      const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-      await sb.from("bids").insert({
-        identity: "SYS_DEBUG_" + Math.random().toString(36).substring(7),
-        title: "Webhook Received",
-        description: `Action: ${payload.action}`,
-        amount: 0,
-        paid: true,
-      });
-    } catch (e) {
-      console.error(e);
-    }
+  // TEMPORARY LOGGING: Save the webhook action to DB to see what Whop is sending
+  try {
+    const { createClient } = require("@supabase/supabase-js");
+    const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+    await sb.from("bids").insert({
+      identity: "SYS_DEBUG_" + Math.random().toString(36).substring(7),
+      title: "Webhook Parsed",
+      description: `Action: ${payload.action}, Type: ${payload.type}, Keys: ${Object.keys(payload).join(", ")}`,
+      amount: 0,
+      paid: true,
+    });
+  } catch (e) {
+    console.error(e);
+  }
+
+  // Support both payload.action, payload.type, and payload.event depending on Whop's format
+  const action = payload.action || payload.type || payload.event || payload.action_type;
+  if (action !== "payment.succeeded" && action !== "membership.activated") {
     return NextResponse.json({ ok: true });
   }
 
