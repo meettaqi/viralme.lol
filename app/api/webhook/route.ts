@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Handle if Whop provided a hex secret instead of a standard webhook secret
-  const { unwrapWebhook } = require("@whop/sdk");
+  const { unwrapWebhook } = require("@whop/sdk/helpers");
   const headers = Object.fromEntries(req.headers);
   
   let payload: any;
