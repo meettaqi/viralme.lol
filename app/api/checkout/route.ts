@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateId } from "@/lib/utils";
+import { generateId, normalizeIdentity } from "@/lib/utils";
 import {
   upsertPendingBid,
   confirmPayment,
@@ -118,11 +118,11 @@ async function demoHandleTakeover(identity: string, siteUrl: string) {
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as RequestBody;
-    const { type = "bid", identity, amount, referredBy, vaultOffer, vaultSecret, title, description } = body;
-
-    if (!identity) {
+    const { type = "bid", amount, referredBy, vaultOffer, vaultSecret, title, description } = body;
+    if (!body.identity) {
       return NextResponse.json({ error: "identity required" }, { status: 400 });
     }
+    const identity = normalizeIdentity(body.identity);
     
     const parsedAmount = parseInt(String(amount ?? "1"), 10);
 

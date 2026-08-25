@@ -48,3 +48,16 @@ export function liveVisitorCount(): number {
   const rng = Math.sin(seed) * 0.5 + 0.5; // 0..1 pseudo-random
   return Math.round(base + rng * variance);
 }
+
+/** Normalize an identity to prevent duplicates (e.g. remove https:// and www.) */
+export function normalizeIdentity(identity: string): string {
+  let cleaned = identity.trim().toLowerCase();
+  
+  if (cleaned.startsWith("http://")) cleaned = cleaned.slice(7);
+  if (cleaned.startsWith("https://")) cleaned = cleaned.slice(8);
+  if (cleaned.startsWith("www.")) cleaned = cleaned.slice(4);
+  
+  if (cleaned.endsWith("/")) cleaned = cleaned.slice(0, -1);
+  
+  return cleaned;
+}
