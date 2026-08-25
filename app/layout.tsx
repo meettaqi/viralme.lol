@@ -28,21 +28,12 @@ export const metadata: Metadata = {
       "No algorithms, no fake reviews. Rank is determined purely by your bid. Put your AI Agent or Product in front of thousands of early adopters.",
     url: "https://viralme.lol",
     siteName: "viralme.lol",
-    images: [
-      {
-        url: "/preview.png",
-        width: 1200,
-        height: 630,
-        alt: "viralme.lol Preview",
-      }
-    ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "viralme.lol — The #1 AI Product Directory",
     description: "No algorithms, no fake reviews. Rank is determined purely by your bid. Put your AI Agent or Product in front of thousands of early adopters.",
-    images: ["/preview.png"],
   },
 };
 
