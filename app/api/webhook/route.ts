@@ -38,18 +38,12 @@ export async function POST(req: NextRequest) {
   }
 
   // Handle if Whop provided a hex secret instead of a standard webhook secret
-  if (webhookSecret.startsWith("ws_")) {
-    const hex = webhookSecret.replace("ws_", "");
-    const base64 = Buffer.from(hex, "hex").toString("base64");
-    webhookSecret = "whsec_" + base64;
-  }
-
-  const wh = new Webhook(webhookSecret);
+  const { unwrapWebhook } = require("@whop/sdk");
   const headers = Object.fromEntries(req.headers);
   
   let payload: any;
   try {
-    payload = wh.verify(body, headers);
+    payload = unwrapWebhook(body, { headers, key: webhookSecret });
   } catch (err) {
     console.error("[webhook] Signature verification failed:", err);
     return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
