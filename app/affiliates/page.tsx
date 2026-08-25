@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import Header from "@/components/Header";
 
 export default function AffiliatesPage() {
   const [inputValue, setInputValue] = useState("");
@@ -33,11 +34,14 @@ export default function AffiliatesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#EBEBEB] text-[#1a2b3c] font-sans pb-20 pt-16">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+    <div className="min-h-screen bg-[#EBEBEB] text-[#1a2b3c] font-sans pb-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4">
+        <Header />
+      </div>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-10">
         
         {/* Step 1 (Inferred from context) */}
-        <div className="flex items-start gap-5 mb-16">
+        <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-16">
           <div className="w-[30px] h-[30px] rounded-full bg-[#3b82f6] text-white flex items-center justify-center font-semibold shrink-0  text-sm mt-0.5">
             1
           </div>
