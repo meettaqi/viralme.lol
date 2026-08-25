@@ -135,11 +135,12 @@ export async function POST(req: NextRequest) {
     
     if (!isRetry) {
       await activateTakeover(identity, identity, parsedAmount);
-      fetchOG(identity)
-        .then(async ({ title }) => {
-          if (title) await activateTakeover(identity, title, parsedAmount);
-        })
-        .catch(() => {});
+      try {
+        const { title } = await fetchOG(identity);
+        if (title) await activateTakeover(identity, title, parsedAmount);
+      } catch (err) {
+        console.error("[webhook] takeover fetchOG failed", err);
+      }
     }
     return NextResponse.json({ ok: true });
   }
@@ -156,14 +157,15 @@ export async function POST(req: NextRequest) {
     stripeSessionId: id,
   });
 
-  fetchOG(identity)
-    .then(async ({ title: fetchedTitle, description: fetchedDesc }) => {
-      // Only update OG data if they didn't manually provide it
-      if (!title || !description) {
-         await updateOGData(id, fetchedTitle || title, fetchedDesc || description);
-      }
-    })
-    .catch(() => {});
+  try {
+    const { title: fetchedTitle, description: fetchedDesc } = await fetchOG(identity);
+    // Only update OG data if they didn't manually provide it
+    if (!title || !description) {
+      await updateOGData(id, fetchedTitle || title, fetchedDesc || description);
+    }
+  } catch (err) {
+    console.error("[webhook] fetchOG failed", err);
+  }
 
   return NextResponse.json({ ok: true });
 }
