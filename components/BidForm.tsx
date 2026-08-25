@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useId } from "react";
-import { cn } from "@/lib/utils";
+import { cn, normalizeIdentity } from "@/lib/utils";
 import type { Bid } from "@/lib/db";
 
 interface Props {
@@ -36,12 +36,17 @@ export default function BidForm({
 
   // Accurate projection: count how many bids are >= the current amount
   const projectedRank = bids.filter(b => b.amount >= amount).length + 1;
-  // Stub for existing bid difference logic
-  const existingBid = 0;
-  const charge = Math.max(MIN_BID, amount - existingBid);
+  
+  // Calculate existing bid difference logic
+  const normalizedInput = normalizeIdentity(identity);
+  const existingBidEntry = bids.find(b => normalizeIdentity(b.identity) === normalizedInput);
+  const existingBidAmount = existingBidEntry ? existingBidEntry.amount : 0;
+  
+  // They only pay the difference to upgrade their rank, but Whop minimum is $1
+  const charge = existingBidAmount > 0 ? Math.max(1, amount - existingBidAmount) : amount;
 
   function adjust(delta: number) {
-    setAmount((prev) => Math.max(MIN_BID, prev + delta));
+    setAmount((prev) => Math.max(existingBidAmount > 0 ? existingBidAmount + 1 : MIN_BID, prev + delta));
   }
 
   function validateIdentity(val: string): string {
@@ -171,9 +176,15 @@ export default function BidForm({
           disabled={loading || !isVerifiedAi}
           className="ml-2 rounded-full bg-brand-500 hover:bg-brand-600 px-6 py-3 text-[15px] font-bold text-white transition-all disabled:opacity-50 whitespace-nowrap shadow-md shadow-brand-500/30"
         >
-          {loading ? "Loading..." : "Claim #1"}
+          {loading ? "Loading..." : existingBidAmount > 0 ? `Upgrade for $${charge}` : `Claim #${projectedRank}`}
         </button>
       </form>
+      
+      {existingBidAmount > 0 && (
+        <p className="text-sm font-medium text-brand-500 mt-2 mb-1 animate-in fade-in">
+          You already bid ${existingBidAmount}. You only pay the difference (${charge}) to reach ${amount}.
+        </p>
+      )}
       
       {/* Optional Metadata Inputs */}
       {identity.trim().length > 3 && (
