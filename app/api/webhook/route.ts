@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
   
   // Clean up the Whop membership right away so the user can purchase this $0 plan again later
   // without hitting the "one active app installment at a time" anti-abuse limit.
-  const membershipId = payment.membership?.id;
+  const membershipId = payment.membership?.id || payment.membership_id || (action === "membership.activated" ? payment.id : undefined);
   if (membershipId) {
     try {
       const { WhopClient } = require("@whop/sdk");
@@ -86,8 +86,21 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // In Whop API v2, the metadata from the plan creation should carry over to the payment/membership event.
-  const meta = (payment.metadata ?? payment.plan?.metadata ?? {}) as Record<string, string>;
+  let meta = (payment.metadata ?? payment.plan?.metadata ?? {}) as Record<string, string>;
+  
+  if (Object.keys(meta).length === 0 && membershipId) {
+    try {
+      const { WhopClient } = require("@whop/sdk");
+      const whop = new WhopClient({ token: process.env.WHOP_API_KEY });
+      const mem = await whop.memberships.retrieve({ id: membershipId });
+      if (mem.metadata) {
+        meta = mem.metadata;
+      }
+    } catch (e) {
+      console.error("[webhook] Failed to fetch membership metadata", e);
+    }
+  }
+
   const { type = "bid", id = generateId(), identity, amount, charge, vaultOffer, vaultSecret, title = "", description = "" } = meta;
 
   if (vaultOffer && vaultSecret) {
