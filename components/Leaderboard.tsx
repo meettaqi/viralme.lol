@@ -59,13 +59,34 @@ export default function Leaderboard({ initialBids, initialTakeover, onClaimClick
   }, [lastRefresh]);
 
   // Sort: takeover entry pinned to top during active takeover
-  const sorted = [...bids].sort((a, b) => {
-    if (takeover.active) {
-      if (a.identity === takeover.identity) return -1;
-      if (b.identity === takeover.identity) return 1;
-    }
+  // Sort bids normally
+  let sorted = [...bids].sort((a, b) => {
     return b.amount - a.amount || new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
   });
+  
+  // Inject or pin takeover to the top
+  if (takeover.active) {
+    const existingIndex = sorted.findIndex(b => b.identity === takeover.identity);
+    if (existingIndex > -1) {
+      const existing = sorted.splice(existingIndex, 1)[0];
+      sorted.unshift(existing);
+    } else {
+      sorted.unshift({
+        id: "takeover-active",
+        identity: takeover.identity,
+        title: takeover.title,
+        description: "HOSTILE TAKEOVER IN PROGRESS",
+        amount: takeover.triggerAmount,
+        baseAmount: takeover.triggerAmount,
+        boostTotal: 0,
+        clicks: 0,
+        hallOfFame: false,
+        createdAt: takeover.triggeredAt,
+        paid: true,
+        stripeSessionId: "takeover",
+      });
+    }
+  }
 
   const totalVolume = bids.reduce((acc, bid) => acc + bid.amount, 0);
   const totalClicks = bids.reduce((acc, bid) => acc + (bid.clicks || 0), 0);
