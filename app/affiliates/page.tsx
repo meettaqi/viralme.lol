@@ -65,9 +65,9 @@ export default function AffiliatesPage() {
             2
           </div>
           <div className="w-full">
-            <h2 className="text-[20px] font-bold text-[#111827] mb-3 tracking-tight">Copy your External link and promote it</h2>
+            <h2 className="text-[20px] font-bold text-[#111827] mb-3 tracking-tight">Copy your Company link and promote it</h2>
             <p className="text-[#4b5563] mb-5 text-[17px] tracking-tight">
-              Under <strong className="text-[#111827] font-semibold">Your affiliate links</strong>, copy the <span className="text-[#a05a41] bg-[#42261f] bg-opacity-10 px-1.5 py-0.5 rounded text-[13px] font-semibold border border-[#a05a41] border-opacity-20">External</span> row - <strong className="text-[#111827] font-semibold">ViralMe.lol board</strong>. On a phone, swipe the table sideways to reach the copy button.
+              Under <strong className="text-[#111827] font-semibold">Your affiliate links</strong>, copy the <span className="text-[#16a34a] bg-[#14532d]/10 px-1.5 py-0.5 rounded text-[13px] font-semibold border border-[#16a34a]/20">Company</span> row - <strong className="text-[#111827] font-semibold">ViralMe.lol board</strong>. On a phone, swipe the table sideways to reach the copy button.
             </p>
             
             {/* Real Whop Affiliate Image */}
