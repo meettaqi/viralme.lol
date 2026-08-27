@@ -82,6 +82,7 @@ export default function Leaderboard({ initialBids, initialTakeover, onClaimClick
         clicks: 0,
         hallOfFame: false,
         createdAt: takeover.triggeredAt,
+        updatedAt: takeover.triggeredAt,
         paid: true,
         stripeSessionId: "takeover",
       });
