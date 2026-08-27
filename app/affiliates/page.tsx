@@ -70,42 +70,15 @@ export default function AffiliatesPage() {
               Under <strong className="text-[#111827] font-semibold">Your affiliate links</strong>, copy the <span className="text-[#a05a41] bg-[#42261f] bg-opacity-10 px-1.5 py-0.5 rounded text-[13px] font-semibold border border-[#a05a41] border-opacity-20">External</span> row - <strong className="text-[#111827] font-semibold">ViralMe.lol board</strong>. On a phone, swipe the table sideways to reach the copy button.
             </p>
             
-            {/* Black Card */}
-            <div className="bg-[#0f0f0f] rounded-[16px] p-6 shadow-xl mb-4 text-white overflow-x-auto">
-              <h3 className="font-medium mb-6 text-[15px] text-[#e5e7eb] tracking-tight">Your affiliate links</h3>
-              
-              <div className="min-w-[500px]">
-                <div className="grid grid-cols-12 gap-4 text-[13px] font-medium text-[#6b7280] mb-3 px-1 border-b border-[#262626] pb-3">
-                  <div className="col-span-3">Type</div>
-                  <div className="col-span-4">Name</div>
-                  <div className="col-span-5">Affiliate link</div>
-                </div>
-                
-                <div className="grid grid-cols-12 gap-4 text-sm items-center border-b border-[#262626] py-3.5 px-1">
-                  <div className="col-span-3">
-                    <span className="bg-[#381c15] text-[#e0653d] px-2 py-0.5 rounded text-[12px] font-medium">External</span>
-                  </div>
-                  <div className="col-span-4 font-semibold text-white text-[14px]">ViralMe.lol board</div>
-                  <div className="col-span-5 flex items-center justify-between font-mono text-[13px] text-[#9ca3af]">
-                    <span>whop.com/e/trk_.../yourname</span>
-                    <div className="w-[26px] h-[26px] rounded border border-[#22c55e] flex items-center justify-center text-[#22c55e] cursor-pointer hover:bg-[#22c55e]/10 transition-colors">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-12 gap-4 text-sm items-center pt-3.5 px-1 opacity-60">
-                  <div className="col-span-3">
-                    <span className="bg-[#0b2615] text-[#22c55e] px-2 py-0.5 rounded text-[12px] font-medium">Company</span>
-                  </div>
-                  <div className="col-span-4 text-[#6b7280] text-[14px]">Viral Me</div>
-                  <div className="col-span-5 font-mono text-[13px] text-[#6b7280]">
-                    whop.com/viralme?a=yourname
-                  </div>
-                </div>
-              </div>
+            {/* Real Whop Affiliate Image */}
+            <div className="rounded-[16px] overflow-hidden shadow-xl mb-4 border border-gray-800">
+              <img 
+                src="/whop-affiliate-links.png" 
+                alt="Your affiliate links on Whop" 
+                className="w-full h-auto block"
+              />
             </div>
-            <p className="text-[13px] text-[#6b7280] tracking-tight">Tap to open your real links. Copy the <strong className="text-[#374151] font-semibold">External</strong> row - the <strong className="text-[#374151] font-semibold">Company</strong> one goes to our storefront, not the board.</p>
+            <p className="text-[13px] text-[#6b7280] tracking-tight">Tap to open your real links. Copy the <strong className="text-[#374151] font-semibold">Company</strong> row (<strong className="text-[#374151] font-semibold">Viralme.lol</strong>) to share and earn 50% commissions.</p>
           </div>
         </div>
 
@@ -122,7 +95,7 @@ export default function AffiliatesPage() {
             
             <input 
               type="text" 
-              placeholder="https://whop.com/e/.../yourname"
+              placeholder="https://whop.com/viralme?a=yourname"
               className="w-full bg-[#E1E1E1] border-transparent rounded-[16px] px-5 py-3 text-[#111827] placeholder:text-[#6b7280] focus:outline-none focus:ring-2 focus:ring-white transition-colors"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
@@ -166,7 +139,7 @@ export default function AffiliatesPage() {
             </li>
             <li className="flex items-start">
               <span className="text-[#2778F5] mr-2 mt-0.5 text-[24px] leading-none">•</span>
-              <span>Clicks and earnings live in your <a href="https://whop.com/dash" target="_blank" rel="noreferrer" className="text-[#2778F5] hover:underline font-medium">Whop dashboard</a>. Those are the numbers that pay.</span>
+              <span>Clicks and earnings live in your <a href="https://whop.com/viralme-lol/affiliates" target="_blank" rel="noreferrer" className="text-[#2778F5] hover:underline font-medium">Whop dashboard</a>. Those are the numbers that pay.</span>
             </li>
           </ul>
           
