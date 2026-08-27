@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient';
+import { normalizeIdentity } from './utils';
 
 export interface LeadMagnet {
   offer: string;
@@ -105,6 +106,24 @@ export async function getLeaderboard(): Promise<Bid[]> {
   
   const bids = rows.map(mapBidFromDB);
   await checkAndUpdateHallOfFame(bids);
+  
+  if (bids.length > 0) {
+    const magnetIdentities = bids.map(b => 'MAGNET_' + b.identity);
+    const { data: magnets } = await supabase
+      .from('bids')
+      .select('identity, title, description')
+      .in('identity', magnetIdentities);
+      
+    if (magnets && magnets.length > 0) {
+      for (const bid of bids) {
+        const magnet = magnets.find(m => m.identity === 'MAGNET_' + bid.identity);
+        if (magnet) {
+          bid.leadMagnet = { offer: magnet.title, secret: magnet.description };
+        }
+      }
+    }
+  }
+  
   return bids;
 }
 
@@ -114,10 +133,11 @@ export async function getTopBid(): Promise<number> {
 }
 
 export async function getCurrentBid(identity: string): Promise<number> {
+  const cleanId = normalizeIdentity(identity);
   const { data, error } = await supabase
     .from('bids')
     .select('base_amount')
-    .eq('identity', identity)
+    .eq('identity', cleanId)
     .eq('paid', true)
     .single();
 
@@ -137,10 +157,11 @@ export async function upsertPendingBid(
     baseAmount?: number;
   }
 ): Promise<Bid> {
+  const cleanId = normalizeIdentity(bid.identity);
   const { data: existing, error: findError } = await supabase
     .from('bids')
     .select('*')
-    .eq('identity', bid.identity)
+    .eq('identity', cleanId)
     .single();
 
   const now = new Date().toISOString();
@@ -178,7 +199,7 @@ export async function upsertPendingBid(
 
   const insertData = {
     id: crypto.randomUUID(),
-    identity: bid.identity,
+    identity: cleanId,
     title: bid.title,
     description: bid.description,
     amount: newBaseAmount + newBoostTotal,
@@ -238,10 +259,11 @@ export async function updateOGData(sessionId: string, title: string, description
 }
 
 export async function applyBoost(identity: string, boostAmount: number): Promise<Bid | null> {
+  const cleanId = normalizeIdentity(identity);
   const { data: existing, error: findError } = await supabase
     .from('bids')
-    .select('*')
-    .eq('identity', identity)
+    .select('id, amount, boost_total')
+    .eq('identity', cleanId)
     .eq('paid', true)
     .single();
 
@@ -263,10 +285,11 @@ export async function applyBoost(identity: string, boostAmount: number): Promise
 }
 
 export async function incrementClicks(identity: string): Promise<number> {
+  const cleanId = normalizeIdentity(identity);
   const { data: existing, error: findError } = await supabase
     .from('bids')
     .select('id, clicks')
-    .eq('identity', identity)
+    .eq('identity', cleanId)
     .eq('paid', true)
     .single();
 
